@@ -89,7 +89,9 @@ function BookCreatePage() {
     form.title.trim() &&
     form.author.trim() &&
     form.summary.trim() &&
-    form.content.trim();
+    form.content.trim() &&
+    !loading && // 표지 생성 중
+    !copyLoading; // 카피/태그 생성 중
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -127,6 +129,8 @@ function BookCreatePage() {
       author: "",
       summary: "",
       content: "",
+      copy: "",
+      tags: [],
       coverImageUrl: "",
     });
     alert("등록이 완료되었습니다!");
@@ -404,19 +408,21 @@ function BookCreatePage() {
                   </span>
                 )}
               </div>
-              <button
-                type='button'
-                onClick={handleAIGenerate}
-                disabled={loading}
-                style={{
-                  ...styles.input,
-                  cursor: loading ? "not-allowed" : "pointer",
-                  fontSize: "13px",
-                  background: loading ? "#f5f5f5" : "#fff",
-                }}
-              >
-                {loading ? "생성 중..." : "AI 표지 생성"}
-              </button>
+              {!previewImage && (
+                <button
+                  type='button'
+                  onClick={handleAIGenerate}
+                  disabled={loading}
+                  style={{
+                    ...styles.input,
+                    cursor: loading ? "not-allowed" : "pointer",
+                    fontSize: "13px",
+                    background: loading ? "#f5f5f5" : "#fff",
+                  }}
+                >
+                  {loading ? "생성 중..." : "AI 표지 생성"}
+                </button>
+              )}
               {previewImage && (
                 <div style={{ display: "flex", gap: "8px" }}>
                   <button
@@ -428,10 +434,11 @@ function BookCreatePage() {
                       padding: "8px",
                       border: "1px solid #ddd",
                       borderRadius: "6px",
-                      cursor: "pointer",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      background: loading ? "#f5f5f5" : "#fff",
                     }}
                   >
-                    재생성
+                    {loading ? "생성 중..." : "재생성"}
                   </button>
                   <button
                     type='button'
@@ -439,13 +446,14 @@ function BookCreatePage() {
                       setForm({ ...form, coverImageUrl: previewImage });
                       setShowAI(false);
                     }}
+                    disabled={loading}
                     style={{
                       flex: 1,
                       padding: "8px",
                       border: "1px solid #bbb",
                       borderRadius: "6px",
-                      background: "#f0f0f0",
-                      cursor: "pointer",
+                      background: loading ? "#e0e0e0" : "#f0f0f0",
+                      cursor: loading ? "not-allowed" : "pointer",
                     }}
                   >
                     이 표지 사용
