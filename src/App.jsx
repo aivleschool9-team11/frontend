@@ -10,10 +10,20 @@ function App() {
   return (
     <BrowserRouter>
       <div
-        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
         <Navbar />
-        <main style={{ flex: 1, padding: "32px 40px" }}>
+
+        <main
+          style={{
+            flex: 1,
+            padding: "32px 40px",
+          }}
+        >
           <Routes>
             <Route path="/" element={<BookListPage />} />
             <Route path="/books/new" element={<BookCreatePage />} />
@@ -21,6 +31,7 @@ function App() {
             <Route path="/books/:id/edit" element={<BookEditPage />} />
           </Routes>
         </main>
+
         <Footer />
       </div>
     </BrowserRouter>
