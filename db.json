@@ -1,5 +1,5 @@
 {
-  "books": [
+  "books-db": [
     {
       "id": "1",
       "title": "면도날",
@@ -119,6 +119,16 @@
       "coverImageUrl": "",
       "createdAt": "2026-05-22T13:00:00.000Z",
       "updatedAt": "2026-05-22T13:00:00.000Z"
+    },
+    {
+      "title": "ㅍ",
+      "author": "ㅍ",
+      "summary": "ㅍ",
+      "content": "ㅍ",
+      "coverImageUrl": "",
+      "createdAt": "2026-05-26T02:25:12.161Z",
+      "updatedAt": "2026-05-26T02:25:12.161Z",
+      "id": "43013NM"
     }
   ]
 }
