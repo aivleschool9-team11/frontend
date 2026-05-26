@@ -10,45 +10,6 @@ const styles = {
     padding: "40px 48px",
     border: "1px solid #e0e0e0",
     borderRadius: "8px",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "18px",
-  },
-  fieldWrap: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "5px",
-  },
-  input: {
-    padding: "9px 12px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-  },
-  textarea: {
-    padding: "9px 12px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-    height: "150px",
-    resize: "vertical",
-  },
-  btnRow: {
-    display: "flex",
-    gap: "8px",
-    justifyContent: "flex-end",
-  },
-};
-
-const styles = {
-  container: {
-    maxWidth: "780px",
-    margin: "40px auto",
-    padding: "40px 48px",
-    border: "1px solid #e0e0e0",
-    borderRadius: "8px",
     backgroundColor: "#fff",
     boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
   },
@@ -104,8 +65,6 @@ function BookEditPage() {
   const [originalBook, setOriginalBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // AI 표지 관련 state
   const [showAI, setShowAI] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
@@ -122,6 +81,7 @@ function BookEditPage() {
           coverImageUrl: data.coverImageUrl || "",
         });
         setOriginalBook(data);
+        setPreviewImage(data.coverImageUrl || "");
       } catch (err) {
         console.error(err);
         setError("도서 정보 불러오기 실패");
@@ -187,11 +147,6 @@ function BookEditPage() {
     }
   };
 
-  const handleCancel = () => {
-    navigate(`/books/${id}`);
-  };
-
-  // AI 표지 생성
   const handleAIGenerate = async () => {
     if (!book.content.trim()) {
       alert("본문 내용을 먼저 입력해주세요!");
@@ -213,12 +168,12 @@ function BookEditPage() {
     }
   };
 
-  if (loading) {
-    return <div>로딩중</div>;
-  }
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", marginTop: "40px" }}>불러오는 중...</p>
+    );
+  if (error)
+    return <p style={{ textAlign: "center", color: "#e55" }}>{error}</p>;
 
   const isFormValid =
     book.title.trim() &&
@@ -233,7 +188,9 @@ function BookEditPage() {
 
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.fieldWrap}>
-          <label>제목 *</label>
+          <label>
+            제목 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
             name='title'
             value={book.title}
@@ -245,7 +202,9 @@ function BookEditPage() {
         </div>
 
         <div style={styles.fieldWrap}>
-          <label>저자 *</label>
+          <label>
+            저자 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
             name='author'
             value={book.author}
@@ -256,7 +215,9 @@ function BookEditPage() {
         </div>
 
         <div style={styles.fieldWrap}>
-          <label>한줄 요약 *</label>
+          <label>
+            한줄 요약 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
             name='summary'
             value={book.summary}
@@ -267,7 +228,9 @@ function BookEditPage() {
         </div>
 
         <div style={styles.fieldWrap}>
-          <label>본문 내용 *</label>
+          <label>
+            본문 내용 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <textarea
             name='content'
             value={book.content}
@@ -290,35 +253,6 @@ function BookEditPage() {
 
         <hr style={{ border: "none", borderTop: "1px solid #eee" }} />
 
-        {/* 현재 표지 미리보기 */}
-        {book.coverImageUrl && (
-          <div style={styles.fieldWrap}>
-            <label>현재 표지</label>
-            <div
-              style={{
-                height: "300px",
-                background: "#f5f5f5",
-                borderRadius: "6px",
-                border: "1px solid #eee",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-              }}
-            >
-              <img
-                src={book.coverImageUrl}
-                alt='현재 표지'
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            </div>
-          </div>
-        )}
-
         {/* AI 표지 생성 토글 */}
         <div
           style={{
@@ -333,12 +267,13 @@ function BookEditPage() {
             style={{
               width: "100%",
               padding: "10px 14px",
-              background: "#fafafa",
+              background: "#f5f0ff",
               border: "none",
               cursor: "pointer",
               display: "flex",
               justifyContent: "space-between",
               fontSize: "13px",
+              color: "#7c3aed",
             }}
           >
             <span>AI 표지 생성</span>
@@ -444,8 +379,16 @@ function BookEditPage() {
         <div style={styles.btnRow}>
           <button
             type='button'
-            onClick={handleCancel}
-            style={{ ...styles.input, cursor: "pointer" }}
+            onClick={() => navigate(`/books/${id}`)}
+            style={{
+              padding: "10px 28px",
+              border: "1px solid #ddd",
+              borderRadius: "6px",
+              background: "#fff",
+              fontSize: "14px",
+              color: "#555",
+              cursor: "pointer",
+            }}
           >
             취소
           </button>
@@ -453,13 +396,13 @@ function BookEditPage() {
             type='submit'
             disabled={!isFormValid}
             style={{
-              padding: "9px 22px",
+              padding: "10px 28px",
               border: "none",
               borderRadius: "6px",
-              background: isFormValid ? "#333" : "#ccc",
+              background: isFormValid ? "#7c3aed" : "#ccc",
               color: "#fff",
-              cursor: isFormValid ? "pointer" : "not-allowed",
               fontSize: "14px",
+              cursor: isFormValid ? "pointer" : "not-allowed",
             }}
           >
             저장
