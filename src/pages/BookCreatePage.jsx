@@ -106,35 +106,45 @@ function BookCreatePage() {
 
     const now = new Date().toISOString();
 
-    // 1. coverImageUrl 빼고 먼저 등록
-    const created = await createBook({
-      title: form.title,
-      author: form.author,
-      summary: form.summary,
-      content: form.content,
-      copy: form.copy,
-      tags: form.tags,
-      coverImageUrl: "",
-      createdAt: now,
-      updatedAt: now,
-    });
+    try {
+      // 1. coverImageUrl 빼고 먼저 등록
+      const created = await createBook({
+        title: form.title,
+        author: form.author,
+        summary: form.summary,
+        content: form.content,
+        copy: form.copy,
+        tags: form.tags,
+        coverImageUrl: "",
+        createdAt: now,
+        updatedAt: now,
+      });
 
-    // 2. 표지 있으면 바로 업데이트
-    if (form.coverImageUrl && created?.id) {
-      await updateBookCover(created.id, form.coverImageUrl);
+      if (!created) {
+        throw new Error("등록 실패");
+      }
+
+      // 2. 표지 있으면 바로 업데이트
+      if (form.coverImageUrl && created.id) {
+        await updateBookCover(created.id, form.coverImageUrl);
+      }
+      alert("등록이 완료되었습니다!");
+    } catch (err) {
+      console.error(err);
+      alert("도서 등록에 실패했습니다.");
+    } finally {
+      // form 초기화
+      setForm({
+        title: "",
+        author: "",
+        summary: "",
+        content: "",
+        copy: "",
+        tags: [],
+        coverImageUrl: "",
+      });
+      navigate("/");
     }
-    // form 초기화
-    setForm({
-      title: "",
-      author: "",
-      summary: "",
-      content: "",
-      copy: "",
-      tags: [],
-      coverImageUrl: "",
-    });
-    alert("등록이 완료되었습니다!");
-    navigate("/");
   };
 
   // AI 표지 생성 핸들러
