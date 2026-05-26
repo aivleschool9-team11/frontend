@@ -8,9 +8,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server" : "node server.cjs"
+    "server": "node server.cjs"
   },
   "dependencies": {
+    "@rolldown/binding-darwin-arm64": "^1.0.2",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "json-server": "^0.17.4",
