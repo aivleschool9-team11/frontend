@@ -15,7 +15,6 @@ export async function createBook(bookData) {
   }
 }
 
-
 // 2. 도서 표지 수정
 export const updateBookCover = async (bookId, imageUrl) => {
   try{
@@ -30,3 +29,25 @@ export const updateBookCover = async (bookId, imageUrl) => {
   }
 };
 
+ // 3. 도서 목록 조회
+export async function getBooks(){
+  try {
+    const res = await fetch(BASE_URL);
+    if (!res.ok) throw new Error("도서 목록 조회 실패");
+    return await res.json();
+  } catch (err) {
+    console.error("getBooks 에러:", err);
+  }
+}
+
+// 4. 도서 상세 조회
+export async function getBook(id){
+  try {
+    const res = await fetch(`${BASE_URL}/${id}`);
+    if (!res.ok) throw new Error("상세 조회 실패");
+    return await res.json();
+  } catch (err) {
+    console.error("getBook 에러:", err);
+  }
+
+}
