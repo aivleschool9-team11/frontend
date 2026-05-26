@@ -2,6 +2,53 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBook, updateBook } from "../api/books";
 
+const styles = {
+  container: {
+    maxWidth: "780px",
+    margin: "40px auto",
+    padding: "40px 48px",
+    border: "1px solid #e0e0e0",
+    borderRadius: "8px",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+  },
+  subTitle: {
+    fontSize: "14px",
+    color: "#aaa",
+    marginBottom: "28px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "18px",
+  },
+  fieldWrap: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
+  },
+  input: {
+    padding: "9px 12px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    fontSize: "14px",
+  },
+  textarea: {
+    padding: "9px 12px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    fontSize: "14px",
+    height: "150px",
+    resize: "vertical",
+  },
+  btnRow: {
+    display: "flex",
+    gap: "8px",
+    justifyContent: "flex-end",
+    marginTop: "8px",
+  },
+};
+
 function BookEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,10 +66,9 @@ function BookEditPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchBook = async () => { 
+    const fetchBook = async () => {
       try {
         const data = await getBook(id);
-
         setBook({
           title: data.title || "",
           author: data.author || "",
@@ -30,7 +76,6 @@ function BookEditPage() {
           content: data.content || "",
           coverImageUrl: data.coverImageUrl || "",
         });
-
         setOriginalBook(data);
       } catch (err) {
         console.error(err);
@@ -44,11 +89,7 @@ function BookEditPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setBook((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setBook((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateForm = () => {
@@ -71,15 +112,12 @@ function BookEditPage() {
     return true;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
     if (!originalBook) return;
 
     const updatedFields = {};
-
     Object.keys(book).forEach((key) => {
       if (book[key] !== originalBook[key]) {
         updatedFields[key] = book[key];
@@ -97,7 +135,6 @@ function BookEditPage() {
       const updatedBook = await updateBook(id, updatedFields);
       console.log("수정 완료:", updatedBook);
       alert("도서 수정 완료");
-
       navigate(`/books/${id}`);
     } catch (err) {
       console.error(err);
@@ -105,116 +142,125 @@ function BookEditPage() {
     }
   };
 
-
-  const handleCancel = () => {
-    navigate(`/books/${id}`);
-  };
-
-  if (loading) {
-    return <div>로딩중</div>;
-  }
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-
-
-  
-
-
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", marginTop: "40px" }}>불러오는 중...</p>
+    );
+  if (error)
+    return <p style={{ textAlign: "center", color: "#e55" }}>{error}</p>;
 
   return (
-    <div>
+    <div style={styles.container}>
       <h1>도서 수정</h1>
+      <p style={styles.subTitle}>내용을 수정하고 저장해주세요</p>
 
-      <form onSubmit = {handleSubmit}>
-        <div>
-          <label>제목</label>
-          <br/>
-
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <div style={styles.fieldWrap}>
+          <label>
+            제목 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
-            type = "text"
-            name = "title"
-            value = {book.title}
-            onChange = {handleChange}
+            type='text'
+            name='title'
+            value={book.title}
+            onChange={handleChange}
+            style={styles.input}
           />
         </div>
-        <br/>
 
-        <div>
-          <label>저자</label>
-          <br/>
-
+        <div style={styles.fieldWrap}>
+          <label>
+            저자 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
-            type="text"
-            name="author"
+            type='text'
+            name='author'
             value={book.author}
             onChange={handleChange}
+            style={styles.input}
           />
         </div>
-        <br/>
 
-        <div>
-          <label>한줄 요약</label>
-          <br />
-
+        <div style={styles.fieldWrap}>
+          <label>
+            한줄 요약 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <textarea
-            name="summary"
+            name='summary'
             value={book.summary}
             onChange={handleChange}
+            style={{ ...styles.textarea, height: "80px" }}
           />
         </div>
-        <br/>
 
-        <div>
-          <label>내용</label>
-          <br />
-
+        <div style={styles.fieldWrap}>
+          <label>
+            본문 내용 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <textarea
-            name="content"
+            name='content'
             value={book.content}
             onChange={handleChange}
+            style={styles.textarea}
           />
         </div>
-        <br/>
 
-        <div>
+        <div style={styles.fieldWrap}>
           <label>표지 이미지 URL</label>
-          <br/>
-
           <input
-            type="text"
-            name="coverImageUrl"
+            type='text'
+            name='coverImageUrl'
             value={book.coverImageUrl}
             onChange={handleChange}
+            style={styles.input}
           />
         </div>
-        <br/>
 
         {book.coverImageUrl && (
-          <div>
+          <div style={styles.fieldWrap}>
+            <label>현재 표지</label>
             <img
               src={book.coverImageUrl}
-              alt="표지 미리보기"
-              width="200"
+              alt='표지 미리보기'
+              style={{ width: "120px", borderRadius: "6px" }}
             />
           </div>
         )}
-        <br/>
 
-        <button type="submit">
-          저장
-        </button>
-
-        <button type="button" onClick={handleCancel}>
-          취소
-        </button>
+        <div style={styles.btnRow}>
+          <button
+            type='button'
+            onClick={() => navigate(`/books/${id}`)}
+            style={{
+              padding: "10px 28px",
+              border: "1px solid #ddd",
+              borderRadius: "6px",
+              background: "#fff",
+              fontSize: "14px",
+              color: "#555",
+              cursor: "pointer",
+            }}
+          >
+            취소
+          </button>
+          <button
+            type='submit'
+            style={{
+              padding: "10px 28px",
+              border: "none",
+              borderRadius: "6px",
+              background: "#7c3aed",
+              color: "#fff",
+              fontSize: "14px",
+              cursor: "pointer",
+            }}
+          >
+            저장
+          </button>
+        </div>
       </form>
     </div>
-
-
-
   );
-} 
+}
 
 export default BookEditPage;
