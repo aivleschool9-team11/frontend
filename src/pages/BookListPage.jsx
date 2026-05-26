@@ -1,14 +1,43 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getBooks } from "../api/books";
 
 function BookListPage() {
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/books")
-      .then((res) => res.json())
-      .then((data) => setBooks(data));
+    async function loadBooks() {
+      try {
+        const booksData = await getBooks();
+        setBooks(booksData);
+      } catch (err) {
+        console.error(err);
+        setError("도서 목록을 불러오지 못했어요");
+      }
+
+      setLoading(false);
+    }
+
+    loadBooks();
   }, []);
+
+  if (loading) {
+    return (
+      <p style={{ textAlign: "center", marginTop: "40px" }}>
+        불러오는 중...
+      </p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p style={{ textAlign: "center", color: "red" }}>
+        {error}
+      </p>
+    );
+  }
 
   return (
     <div
@@ -66,7 +95,7 @@ function BookListPage() {
 
               <p>저자: {book.author}</p>
 
-              <p>{book.description}</p>
+              <p>{book.summary}</p>
 
               <Link to={`/books/${book.id}`}>
                 <button
