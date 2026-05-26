@@ -142,12 +142,16 @@ function BookEditPage() {
 
     try {
       const updatedBook = await updateBook(id, updatedFields);
+      if (!updatedBook) {
+        throw new Error("수정 실패");
+      }
       console.log("수정 완료:", updatedBook);
       alert("도서 수정 완료");
-      navigate(`/books/${id}`);
     } catch (err) {
       console.error(err);
       alert("도서 수정에 실패했습니다.");
+    } finally {
+      navigate("/");
     }
   };
 
