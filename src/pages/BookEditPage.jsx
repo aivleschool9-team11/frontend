@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom"; 
-const BASE_URL = "http://localhost:3000/books";
+import { useNavigate, useParams } from "react-router-dom";
+import { getBook, updateBook } from "../api/books";
 
 function BookEditPage() {
   const { id } = useParams();
@@ -21,8 +21,7 @@ function BookEditPage() {
   useEffect(() => {
     const fetchBook = async () => { 
       try {
-        const res = await fetch(`${BASE_URL}/${id}`);
-        const data = await res.json();
+        const data = await getBook(id);
 
         setBook({
           title: data.title || "",
@@ -95,19 +94,7 @@ function BookEditPage() {
     updatedFields.updatedAt = new Date().toISOString();
 
     try {
-      const res = await fetch(`${BASE_URL}/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedFields),
-      });
-
-      if (!res.ok) {
-        throw new Error("도서 수정 실패");
-      }
-
-      const updatedBook = await res.json();
+      const updatedBook = await updateBook(id, updatedFields);
       console.log("수정 완료:", updatedBook);
       alert("도서 수정 완료");
 

@@ -74,3 +74,19 @@ export async function deleteBook(id) {
     return false;
   }
 }
+
+// 6. 도서 수정
+export async function updateBook(id, updatedFields) {
+  try {
+    const res = await fetch(`${BASE_URL}/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedFields),
+    });
+    if (!res.ok) throw new Error("도서 수정 실패");
+    return await res.json();
+  } catch (err) {
+    console.error("updateBook 에러:", err);
+    throw err;
+  }
+}
