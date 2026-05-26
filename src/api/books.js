@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000/books-db";
+const BASE_URL = "http://localhost:3000/books";
 
 export async function createBook(bookData) {
   try {

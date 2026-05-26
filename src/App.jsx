@@ -16,9 +16,9 @@ function App() {
         <main style={{ flex: 1, padding: "32px 40px" }}>
           <Routes>
             <Route path="/" element={<BookListPage />} />
-            <Route path="/books-db/new" element={<BookCreatePage />} />
-            <Route path="/books-db/:id" element={<BookDetailPage />} />
-            <Route path="/books-db/:id/edit" element={<BookEditPage />} />
+            <Route path="/books/new" element={<BookCreatePage />} />
+            <Route path="/books/:id" element={<BookDetailPage />} />
+            <Route path="/books/:id/edit" element={<BookEditPage />} />
           </Routes>
         </main>
         <Footer />
