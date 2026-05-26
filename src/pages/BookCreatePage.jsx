@@ -11,6 +11,13 @@ const styles = {
     padding: "40px 48px",
     border: "1px solid #e0e0e0",
     borderRadius: "8px",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+  },
+  subTitle: {
+    fontSize: "14px",
+    color: "#aaa",
+    marginBottom: "28px",
   },
   form: {
     display: "flex",
@@ -45,6 +52,18 @@ const styles = {
     display: "flex",
     gap: "8px",
     justifyContent: "flex-end",
+    marginTop: "8px",
+  },
+  aiBtn: {
+    width: "100%",
+    padding: "10px 14px",
+    background: "#f5f0ff",
+    border: "none",
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "13px",
+    color: "#7c3aed",
   },
 };
 
@@ -132,11 +151,15 @@ function BookCreatePage() {
 
   return (
     <div style={styles.container}>
-      <h1>새 도서 등록</h1>
+      <h1 style={{ fontSize: "22px", fontWeight: "500", marginBottom: "8px" }}>
+        새 도서 등록
+      </h1>
 
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.fieldWrap}>
-          <label>제목 *</label>
+          <label>
+            제목 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
             name='title'
             value={form.title}
@@ -152,7 +175,9 @@ function BookCreatePage() {
         </div>
 
         <div style={styles.fieldWrap}>
-          <label>저자 *</label>
+          <label>
+            저자 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
             name='author'
             value={form.author}
@@ -167,7 +192,9 @@ function BookCreatePage() {
         </div>
 
         <div style={styles.fieldWrap}>
-          <label>한줄 요약 *</label>
+          <label>
+            한줄 요약 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <input
             name='summary'
             value={form.summary}
@@ -182,7 +209,9 @@ function BookCreatePage() {
         </div>
 
         <div style={styles.fieldWrap}>
-          <label>본문 내용 *</label>
+          <label>
+            본문 내용 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <textarea
             name='content'
             value={form.content}
@@ -220,16 +249,7 @@ function BookCreatePage() {
           <button
             type='button'
             onClick={() => setShowAI(!showAI)}
-            style={{
-              width: "100%",
-              padding: "10px 14px",
-              background: "#fafafa",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "13px",
-            }}
+            style={styles.aiBtn}
           >
             <span>AI 표지 생성</span>
             <span>{showAI ? "▲" : "▼"}</span>
@@ -334,7 +354,7 @@ function BookCreatePage() {
         <div style={styles.btnRow}>
           <button
             type='button'
-            onClick={() => alert("취소")}
+            onClick={() => navigate("/")}
             style={{ ...styles.input, cursor: "pointer" }}
           >
             취소
@@ -343,10 +363,10 @@ function BookCreatePage() {
             type='submit'
             disabled={!isFormValid}
             style={{
-              padding: "9px 22px",
+              padding: "10px 28px",
               border: "none",
               borderRadius: "6px",
-              background: isFormValid ? "#333" : "#ccc",
+              background: isFormValid ? "#7c3aed" : "#ccc",
               color: "#fff",
               cursor: isFormValid ? "pointer" : "not-allowed",
               fontSize: "14px",
