@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBook, deleteBook } from "../api/books";
+import { getBook, deleteBook, likeBook } from "../api/books";
 
 const styles = {
   container: {
@@ -119,6 +119,16 @@ function BookDetailPage() {
     }
   };
 
+  const handleLike = async () => {
+    const newLikes = (book.likes || 0) + 1;
+    try {
+      const updated = await likeBook(id, newLikes);
+      setBook(updated);
+    } catch (err) {
+      console.error("좋아요 에러:", err);
+    }
+  };
+
   if (loading)
     return (
       <p style={{ textAlign: "center", marginTop: "40px" }}>불러오는 중...</p>
@@ -158,6 +168,24 @@ function BookDetailPage() {
             </button>
             <button style={styles.deleteBtn} onClick={handleDelete}>
               삭제
+            </button>
+
+            <button
+              onClick={handleLike}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ffb3b3",
+                borderRadius: "6px",
+                background: "#fff",
+                fontSize: "16px",
+                color: "#e55",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              {(book.likes || 0) > 0 ? "♥" : "♡"} {book.likes || 0}
             </button>
           </div>
         </div>

@@ -8,7 +8,7 @@ function BookListPage() {
   const [error, setError] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
-
+  
   useEffect(() => {
     async function loadBooks() {
       try {
@@ -38,6 +38,7 @@ function BookListPage() {
       return new Date(a.createdAt) - new Date(b.createdAt);
     if (sortOrder === "title") return a.title.localeCompare(b.title);
     if (sortOrder === "author") return a.author.localeCompare(b.author);
+    if (sortOrder === "likes") return (b.likes || 0) - (a.likes || 0);
     return 0;
   });
 
@@ -100,6 +101,7 @@ function BookListPage() {
         >
           <option value="newest">최신순</option>
           <option value="oldest">오래된순</option>
+          <option value="likes">좋아요순</option>
           <option value="title">제목순</option>
           <option value="author">작가명순</option>
         </select>
@@ -165,6 +167,10 @@ function BookListPage() {
                 <p>저자: {book.author}</p>
                 
                 <p>{book.summary}</p>
+
+                <p style={{ fontSize: "13px", color: "#e55" }}>
+                  {(book.likes || 0) > 0 ? "♥" : "♡"} {book.likes || 0}
+                </p>
 
                 <Link to={`/books/${book.id}`}>
                   <button
