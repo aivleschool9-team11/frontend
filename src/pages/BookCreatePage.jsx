@@ -99,6 +99,7 @@ function BookCreatePage() {
         tags: [],
         coverImageUrl: "",
       });
+      localStorage.clear();
       navigate("/");
     }
   };
