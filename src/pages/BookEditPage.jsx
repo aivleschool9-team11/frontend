@@ -1,54 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBook, updateBook } from "../api/books";
-import { fetchAiCover } from "../api/openai";
-
-const styles = {
-  container: {
-    maxWidth: "780px",
-    margin: "40px auto",
-    padding: "40px 48px",
-    border: "1px solid #e0e0e0",
-    borderRadius: "8px",
-    backgroundColor: "#fff",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  },
-  subTitle: {
-    fontSize: "14px",
-    color: "#aaa",
-    marginBottom: "28px",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "18px",
-  },
-  fieldWrap: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "5px",
-  },
-  input: {
-    padding: "9px 12px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-  },
-  textarea: {
-    padding: "9px 12px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    fontSize: "14px",
-    height: "150px",
-    resize: "vertical",
-  },
-  btnRow: {
-    display: "flex",
-    gap: "8px",
-    justifyContent: "flex-end",
-    marginTop: "8px",
-  },
-};
+import { fetchAiCover, fetchAiCopyAndTags } from "../api/openai";
+import { formStyles } from "../components/book/formStyles";
+import BookForm from "../components/book/BookForm";
+import AICopyTagSection from "../components/book/AICopyTagSection";
+import AICoverSection from "../components/book/AICoverSection";
 
 function BookEditPage() {
   const { id } = useParams();
@@ -70,6 +27,7 @@ function BookEditPage() {
   const [showAI, setShowAI] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [copyLoading, setCopyLoading] = useState(false);
 
   useEffect(() => {
     const fetchBookData = async () => {
@@ -176,6 +134,23 @@ function BookEditPage() {
     }
   };
 
+  const handleAICopyAndTags = async () => {
+    if (!book.title.trim() || !book.content.trim()) {
+      alert("제목과 본문 내용을 먼저 입력해주세요!");
+      return;
+    }
+    try {
+      setCopyLoading(true);
+      const result = await fetchAiCopyAndTags(book.title, book.content);
+      setBook({ ...book, copy: result.copy, tags: result.tags });
+    } catch (err) {
+      alert("생성에 실패했습니다.");
+      console.error(err);
+    } finally {
+      setCopyLoading(false);
+    }
+  };
+
   if (loading)
     return (
       <p style={{ textAlign: "center", marginTop: "40px" }}>불러오는 중...</p>
@@ -187,262 +162,45 @@ function BookEditPage() {
     book.title.trim() &&
     book.author.trim() &&
     book.summary.trim() &&
-    book.content.trim();
+    book.content.trim() &&
+    !aiLoading &&
+    !copyLoading;
 
   return (
-    <div style={styles.container}>
+    <div style={formStyles.container}>
       <h1>도서 수정</h1>
-      <p style={styles.subTitle}>내용을 수정하고 저장해주세요</p>
-
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.fieldWrap}>
-          <label>
-            제목 <span style={{ color: "#e55" }}>*</span>
-          </label>
-          <input
-            name='title'
-            value={book.title}
-            onChange={handleChange}
-            placeholder='제목을 입력하세요 (최대 100자)'
-            maxLength={100}
-            style={styles.input}
-          />
-        </div>
-
-        <div style={styles.fieldWrap}>
-          <label>
-            저자 <span style={{ color: "#e55" }}>*</span>
-          </label>
-          <input
-            name='author'
-            value={book.author}
-            onChange={handleChange}
-            placeholder='저자를 입력하세요'
-            style={styles.input}
-          />
-        </div>
-
-        <div style={styles.fieldWrap}>
-          <label>
-            한줄 요약 <span style={{ color: "#e55" }}>*</span>
-          </label>
-          <input
-            name='summary'
-            value={book.summary}
-            onChange={handleChange}
-            placeholder='한줄 요약을 입력하세요'
-            style={styles.input}
-          />
-        </div>
-
-        <div style={styles.fieldWrap}>
-          <label>
-            본문 내용 <span style={{ color: "#e55" }}>*</span>
-          </label>
-          <textarea
-            name='content'
-            value={book.content}
-            onChange={handleChange}
-            placeholder='본문 내용을 입력하세요 (최대 5000자)'
-            maxLength={5000}
-            style={styles.textarea}
-          />
-          <p
-            style={{
-              fontSize: "12px",
-              color: "#aaa",
-              textAlign: "right",
-              margin: 0,
-            }}
-          >
-            {book.content.length} / 5000
-          </p>
-        </div>
-
+      <p style={formStyles.subTitle}>내용을 수정하고 저장해주세요</p>
+      <form onSubmit={handleSubmit} style={formStyles.form}>
+        <BookForm form={book} onChange={handleChange} />
         <hr style={{ border: "none", borderTop: "1px solid #eee" }} />
-
-        <div style={styles.fieldWrap}>
-          <label>한줄 카피</label>
-          <input
-            name='copy'
-            value={book.copy}
-            onChange={handleChange}
-            placeholder='한줄 카피를 입력하세요'
-            style={styles.input}
-          />
-        </div>
-
-        <div style={styles.fieldWrap}>
-          <label>태그</label>
-          <div
-            style={{
-              display: "flex",
-              gap: "6px",
-              flexWrap: "wrap",
-              marginBottom: "6px",
-            }}
-          >
-            {book.tags.map((tag, i) => (
-              <span
-                key={i}
-                onClick={() =>
-                  setBook({
-                    ...book,
-                    tags: book.tags.filter((_, idx) => idx !== i),
-                  })
-                }
-                style={{
-                  fontSize: "12px",
-                  padding: "4px 10px",
-                  background: "#f5f0ff",
-                  borderRadius: "999px",
-                  color: "#7c3aed",
-                  cursor: "pointer",
-                }}
-              >
-                {tag} ✕
-              </span>
-            ))}
-          </div>
-          <input
-            placeholder='#태그 입력 후 Enter'
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                const tag = e.target.value.trim();
-                if (tag && !book.tags.includes(tag)) {
-                  setBook({ ...book, tags: [...book.tags, tag] });
-                  e.target.value = "";
-                }
-              }
-            }}
-            style={styles.input}
-          />
-        </div>
-
-        <div
-          style={{
-            border: "1px solid #ddd",
-            borderRadius: "6px",
-            overflow: "hidden",
+        <AICopyTagSection
+          copy={book.copy}
+          tags={book.tags}
+          copyLoading={copyLoading}
+          onChange={handleChange}
+          onAIRequest={handleAICopyAndTags}
+          onAdd={(tag) => setBook({ ...book, tags: [...book.tags, tag] })}
+          onRemove={(i) =>
+            setBook({ ...book, tags: book.tags.filter((_, idx) => idx !== i) })
+          }
+        />
+        <AICoverSection
+          showAI={showAI}
+          onToggle={() => setShowAI(!showAI)}
+          previewImage={previewImage}
+          loading={aiLoading}
+          onAIRequest={handleAIGenerate}
+          onSelectCover={() => {
+            setBook({ ...book, coverImageUrl: previewImage });
+            setShowAI(false);
           }}
-        >
-          <button
-            type='button'
-            onClick={() => setShowAI(!showAI)}
-            style={{
-              width: "100%",
-              padding: "10px 14px",
-              background: "#f5f0ff",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "13px",
-              color: "#7c3aed",
-            }}
-          >
-            <span>AI 표지 생성</span>
-            <span>{showAI ? "▲" : "▼"}</span>
-          </button>
-
-          {showAI && (
-            <div
-              style={{
-                padding: "14px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-                borderTop: "1px solid #eee",
-              }}
-            >
-              <div
-                style={{
-                  height: "300px",
-                  background: "#f5f5f5",
-                  borderRadius: "6px",
-                  border: "1px dashed #ccc",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
-                }}
-              >
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt='AI 생성 표지'
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                    }}
-                  />
-                ) : (
-                  <span style={{ color: "#bbb", fontSize: "13px" }}>
-                    표지 생성 후 미리보기
-                  </span>
-                )}
-              </div>
-              <button
-                type='button'
-                onClick={handleAIGenerate}
-                disabled={aiLoading}
-                style={{
-                  ...styles.input,
-                  cursor: aiLoading ? "not-allowed" : "pointer",
-                  fontSize: "13px",
-                  background: aiLoading ? "#f5f5f5" : "#fff",
-                }}
-              >
-                {aiLoading ? "생성 중..." : "AI 표지 생성"}
-              </button>
-              {previewImage && (
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button
-                    type='button'
-                    onClick={handleAIGenerate}
-                    disabled={aiLoading}
-                    style={{
-                      flex: 1,
-                      padding: "8px",
-                      border: "1px solid #ddd",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    재생성
-                  </button>
-                  <button
-                    type='button'
-                    onClick={() => {
-                      setBook({ ...book, coverImageUrl: previewImage });
-                      setShowAI(false);
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: "8px",
-                      border: "1px solid #bbb",
-                      borderRadius: "6px",
-                      background: "#f0f0f0",
-                      cursor: "pointer",
-                    }}
-                  >
-                    이 표지 사용
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
+        />
         {book.coverImageUrl && (
           <p style={{ color: "#1976d2", fontSize: "13px", fontWeight: "500" }}>
             표지 적용됨
           </p>
         )}
-
-        <div style={styles.btnRow}>
+        <div style={formStyles.btnRow}>
           <button
             type='button'
             onClick={() => navigate(`/books/${id}`)}

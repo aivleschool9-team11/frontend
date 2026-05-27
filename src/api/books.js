@@ -90,17 +90,3 @@ export async function updateBook(id, updatedFields) {
     throw err;
   }
 }
-
-// 7. 도서 좋아요
-export async function likeBook(id, likes) {
-  try {
-    const res = await fetch(`${BASE_URL}/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ likes }),
-    });
-    return await res.json();
-  } catch (err) {
-    console.error("likeBook 에러:", err);
-  }
-}

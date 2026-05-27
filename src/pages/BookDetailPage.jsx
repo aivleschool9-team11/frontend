@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBook, deleteBook, likeBook } from "../api/books";
+import { getBook, deleteBook} from "../api/books";
 
 const styles = {
   container: {
@@ -91,6 +91,7 @@ function BookDetailPage() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     async function loadBook() {
@@ -105,6 +106,9 @@ function BookDetailPage() {
       }
     }
     loadBook();
+
+  const liked = localStorage.getItem(`likes_${id}`);
+    if (liked) setIsLiked(true);
   }, [id]);
 
   const handleDelete = async () => {
@@ -119,13 +123,13 @@ function BookDetailPage() {
     }
   };
 
-  const handleLike = async () => {
-    const newLikes = (book.likes || 0) + 1;
-    try {
-      const updated = await likeBook(id, newLikes);
-      setBook(updated);
-    } catch (err) {
-      console.error("좋아요 에러:", err);
+  const handleLike = () => {
+    if (isLiked) {
+      localStorage.removeItem(`likes_${id}`);
+      setIsLiked(false);
+    } else {
+      localStorage.setItem(`likes_${id}`, "true");
+      setIsLiked(true);
     }
   };
 
@@ -185,7 +189,7 @@ function BookDetailPage() {
                 gap: "6px",
               }}
             >
-              {(book.likes || 0) > 0 ? "♥" : "♡"} {book.likes || 0}
+              {isLiked ? "♥" : "♡"} 좋아요
             </button>
           </div>
         </div>

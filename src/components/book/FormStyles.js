@@ -1,0 +1,51 @@
+export const formStyles = {
+  container: {
+    maxWidth: "780px",
+    margin: "40px auto",
+    padding: "40px 48px",
+    border: "1px solid #e0e0e0",
+    borderRadius: "8px",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+  },
+  subTitle: {
+    fontSize: "14px",
+    color: "#aaa",
+    marginBottom: "28px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "18px",
+  },
+  fieldWrap: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
+  },
+  input: {
+    padding: "9px 12px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    fontSize: "14px",
+  },
+  textarea: {
+    padding: "9px 12px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    fontSize: "14px",
+    height: "150px",
+    resize: "vertical",
+  },
+  errorMsg: {
+    fontSize: "12px",
+    color: "#e55",
+    margin: 0,
+  },
+  btnRow: {
+    display: "flex",
+    gap: "8px",
+    justifyContent: "flex-end",
+    marginTop: "8px",
+  },
+};
