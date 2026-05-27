@@ -13,8 +13,8 @@ function BookCreatePage() {
   const [form, setForm] = useState({
     title: "",
     author: "",
-    summary: "",
     content: "",
+    summary: "",
     copy: "",
     tags: [],
     coverImageUrl: "",
@@ -29,8 +29,8 @@ function BookCreatePage() {
   const isFormValid =
     form.title.trim() &&
     form.author.trim() &&
-    form.summary.trim() &&
     form.content.trim() &&
+    form.summary.trim() &&
     !loading &&
     !copyLoading;
 
@@ -51,8 +51,8 @@ function BookCreatePage() {
       const created = await createBook({
         title: form.title,
         author: form.author,
-        summary: form.summary,
         content: form.content,
+        summary: form.summary,
         copy: form.copy,
         tags: form.tags,
         coverImageUrl: "",
@@ -75,8 +75,8 @@ function BookCreatePage() {
       setForm({
         title: "",
         author: "",
-        summary: "",
         content: "",
+        summary: "",
         copy: "",
         tags: [],
         coverImageUrl: "",
@@ -114,7 +114,12 @@ function BookCreatePage() {
     try {
       setCopyLoading(true);
       const result = await fetchAiCopyAndTags(form.title, form.content);
-      setForm({ ...form, copy: result.copy, tags: result.tags });
+      setForm({
+        ...form,
+        summary: result.summary,
+        copy: result.copy,
+        tags: result.tags,
+      });
     } catch (err) {
       alert("생성에 실패했습니다.");
       console.error(err);
@@ -132,6 +137,7 @@ function BookCreatePage() {
         <BookForm form={form} errors={errors} onChange={handleChange} />
         <hr style={{ border: "none", borderTop: "1px solid #eee" }} />
         <AICopyTagSection
+          summary={form.summary}
           copy={form.copy}
           tags={form.tags}
           copyLoading={copyLoading}

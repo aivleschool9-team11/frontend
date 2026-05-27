@@ -42,6 +42,16 @@ export const formStyles = {
     color: "#e55",
     margin: 0,
   },
+  btn: {
+    padding: "9px 12px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    fontSize: "14px",
+    cursor: "pointer",
+    background: "#fff",
+    color: "#333",
+    fontFamily: "inherit",
+  },
   btnRow: {
     display: "flex",
     gap: "8px",

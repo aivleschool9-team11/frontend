@@ -1,4 +1,4 @@
-import { formStyles } from "./formStyles";
+import { formStyles } from "./FormStyles";
 
 /**
  * AI 표지 생성 섹션
@@ -30,11 +30,11 @@ function AICoverSection({
         type='button'
         onClick={onToggle}
         style={{
+          ...formStyles.btn,
           width: "100%",
           padding: "10px 14px",
           background: "#f5f0ff",
           border: "none",
-          cursor: "pointer",
           display: "flex",
           justifyContent: "space-between",
           fontSize: "13px",
@@ -89,13 +89,13 @@ function AICoverSection({
               onClick={onAIRequest}
               disabled={loading}
               style={{
-                ...formStyles.input,
+                ...formStyles.btn,
                 cursor: loading ? "not-allowed" : "pointer",
                 fontSize: "13px",
                 background: loading ? "#f5f5f5" : "#fff",
               }}
             >
-              {loading ? "---생성 중---" : "AI 표지 생성"}
+              {loading ? "--- 생성 중 ---" : "AI 표지 생성"}
             </button>
           )}
           {previewImage && (
@@ -105,25 +105,24 @@ function AICoverSection({
                 onClick={onAIRequest}
                 disabled={loading}
                 style={{
+                  ...formStyles.btn,
                   flex: 1,
                   padding: "8px",
-                  border: "1px solid #ddd",
-                  borderRadius: "6px",
                   cursor: loading ? "not-allowed" : "pointer",
                   background: loading ? "#f5f5f5" : "#fff",
                 }}
               >
-                {loading ? "---생성 중---" : "재생성"}
+                {loading ? "--- 생성 중 ---" : "재생성"}
               </button>
               <button
                 type='button'
                 onClick={onSelectCover}
                 disabled={loading}
                 style={{
+                  ...formStyles.btn,
                   flex: 1,
                   padding: "8px",
                   border: "1px solid #bbb",
-                  borderRadius: "6px",
                   background: loading ? "#e0e0e0" : "#f0f0f0",
                   cursor: loading ? "not-allowed" : "pointer",
                 }}
