@@ -32,20 +32,21 @@ function AICoverSection({
     <Paper
       elevation={0}
       sx={{
-        border: "1px solid #ead7b1",
+        border: "1px solid",
+        borderColor: "primary.light",
         borderRadius: "12px",
-        overflow: "hidden", // 삐져나온 배경색 클립 처리
-        backgroundColor: "#fffdf8",
+        overflow: "hidden",
+        backgroundColor: "background.default",
       }}
     >
       <Button
-        type="button"
+        type='button'
         onClick={onToggle}
         fullWidth
         sx={{
           padding: "12px 16px",
-          background: "#F8F3EA",
-          color: "#8A6A44",
+          background: "background.paper",
+          color: "text.secondary",
           borderTopLeftRadius: "11px",
           borderTopRightRadius: "11px",
           borderBottomLeftRadius: 0,
@@ -54,13 +55,16 @@ function AICoverSection({
           justifyContent: "space-between",
           alignItems: "center",
           "&:hover": {
-            background: "#eee7db",
+            background: "rgba(201, 141, 26, 0.08)",
           },
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <SparklesIcon sx={{ fontSize: "18px" }} />
-          <Typography variant="body2" sx={{ fontWeight: "bold", fontSize: "14px", fontFamily: "inherit" }}>
+          <Typography
+            variant='body2'
+            sx={{ fontWeight: "bold", fontSize: "14px", fontFamily: "inherit" }}
+          >
             AI 표지 생성
           </Typography>
         </Box>
@@ -74,15 +78,17 @@ function AICoverSection({
             display: "flex",
             flexDirection: "column",
             gap: 2,
-            borderTop: "1px solid #ead7b1",
+            borderTop: "1px solid",
+            borderColor: "primary.light",
           }}
         >
           <Box
             sx={{
               height: "300px",
-              background: "#faf6ee",
+              background: "background.paper",
               borderRadius: "8px",
-              border: "1px dashed #c98d1a",
+              border: "1px dashed",
+              borderColor: "primary.main",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -93,7 +99,7 @@ function AICoverSection({
             {previewImage ? (
               <img
                 src={previewImage}
-                alt="AI 생성 표지"
+                alt='AI 생성 표지'
                 style={{
                   width: "100%",
                   height: "100%",
@@ -101,7 +107,7 @@ function AICoverSection({
                 }}
               />
             ) : (
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              <Typography variant='body2' sx={{ color: "text.secondary" }}>
                 표지 생성 후 미리보기
               </Typography>
             )}
@@ -121,8 +127,11 @@ function AICoverSection({
                   gap: 1.5,
                 }}
               >
-                <CircularProgress color="secondary" />
-                <Typography variant="body2" sx={{ fontWeight: "bold", color: "secondary.main" }}>
+                <CircularProgress color='secondary' />
+                <Typography
+                  variant='body2'
+                  sx={{ fontWeight: "bold", color: "secondary.main" }}
+                >
                   AI가 표지를 그리는 중...
                 </Typography>
               </Box>
@@ -131,19 +140,19 @@ function AICoverSection({
 
           {!previewImage && (
             <Button
-              variant="contained"
+              variant='contained'
               onClick={onAIRequest}
               disabled={loading}
               fullWidth
-              sx={{
-                background: "#8A6A44",
-                color: "#fff",
-                "&:hover": {
-                  background: "#705332",
-                },
-                py: 1.2,
-              }}
-              startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <SparklesIcon />}
+              color='secondary'
+              sx={{ py: 1.2 }}
+              startIcon={
+                loading ? (
+                  <CircularProgress size={16} color='inherit' />
+                ) : (
+                  <SparklesIcon />
+                )
+              }
             >
               {loading ? "생성 중..." : "AI 표지 생성"}
             </Button>
@@ -152,34 +161,32 @@ function AICoverSection({
           {previewImage && (
             <Box sx={{ display: "flex", gap: 1.5 }}>
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={onAIRequest}
                 disabled={loading}
                 fullWidth
                 sx={{
-                  borderColor: "#ead7b1",
-                  color: "#8A6A44",
+                  borderColor: "primary.light",
+                  color: "text.secondary",
                   "&:hover": {
-                    borderColor: "#8A6A44",
-                    background: "#eee7db",
+                    borderColor: "primary.main",
+                    background: "rgba(201, 141, 26, 0.08)",
                   },
                 }}
-                startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
+                startIcon={
+                  loading ? (
+                    <CircularProgress size={16} color='inherit' />
+                  ) : null
+                }
               >
                 {loading ? "생성 중..." : "재생성"}
               </Button>
               <Button
-                variant="contained"
+                variant='contained'
                 onClick={onSelectCover}
                 disabled={loading}
                 fullWidth
-                sx={{
-                  background: "#8A6A44",
-                  color: "#fff",
-                  "&:hover": {
-                    background: "#705332",
-                  },
-                }}
+                color='secondary'
               >
                 이 표지 사용
               </Button>

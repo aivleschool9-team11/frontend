@@ -73,7 +73,10 @@ function BookDetailPage() {
 
   if (loading) {
     return (
-      <Typography variant="body1" sx={{ textAlign: "center", marginTop: "40px" }}>
+      <Typography
+        variant='body1'
+        sx={{ textAlign: "center", marginTop: "40px" }}
+      >
         불러오는 중...
       </Typography>
     );
@@ -81,21 +84,25 @@ function BookDetailPage() {
 
   if (error) {
     return (
-      <Typography variant="body1" sx={{ textAlign: "center", color: "#e55", marginTop: "40px" }}>
+      <Typography
+        variant='body1'
+        sx={{ textAlign: "center", color: "error.main", marginTop: "40px" }}
+      >
         {error}
       </Typography>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth='md' sx={{ py: 4 }}>
       <Paper
         elevation={2}
         sx={{
           p: { xs: 3, md: 5 },
-          backgroundColor: "#fffaf3",
+          backgroundColor: "background.paper",
           borderRadius: "20px",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.05), 0 2px 8px rgba(201,141,26,0.12)",
+          boxShadow:
+            "0 8px 20px rgba(0,0,0,0.05), 0 2px 8px rgba(201,141,26,0.12)",
         }}
       >
         <Box
@@ -119,7 +126,7 @@ function BookDetailPage() {
               }}
             >
               <Box
-                component="img"
+                component='img'
                 src={book.coverImageUrl}
                 alt={book.title}
                 sx={{
@@ -132,17 +139,20 @@ function BookDetailPage() {
                 }}
               />
               <Button
-                variant="outlined"
-                size="small"
+                variant='outlined'
+                size='small'
                 onClick={handleDownload}
                 startIcon={<DownloadIcon />}
                 sx={{
-                  borderColor: "#ead7b1",
-                  color: "#6b4f3a",
+                  borderColor: "primary.light",
+                  color: "text.secondary",
                   width: "100%",
                   py: 0.8,
                   fontFamily: "inherit",
-                  "&:hover": { borderColor: "#c98d1a", backgroundColor: "#fff5f0" },
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    backgroundColor: "rgba(201, 141, 26, 0.08)",
+                  },
                 }}
               >
                 표지 다운로드
@@ -153,14 +163,15 @@ function BookDetailPage() {
               sx={{
                 width: "200px",
                 height: "280px",
-                background: "#f5f5f5",
+                background: "background.default",
                 borderRadius: "8px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#bbb",
+                color: "text.disabled",
                 fontSize: "13px",
-                border: "1px dashed #ccc",
+                border: "1px dashed",
+                borderColor: "primary.light",
                 alignSelf: { xs: "center", md: "flex-start" },
                 flexShrink: 0,
               }}
@@ -170,12 +181,19 @@ function BookDetailPage() {
           )}
 
           {/* 도서 정보 */}
-          <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              width: "100%",
+            }}
+          >
             <Typography
-              variant="h1"
+              variant='h1'
               sx={{
                 fontSize: { xs: "28px", md: "36px" },
-                color: "#b87912",
                 textAlign: "left",
                 mb: 0.5,
                 fontWeight: 500,
@@ -194,38 +212,53 @@ function BookDetailPage() {
                 gap: 1,
               }}
             >
-              <Typography variant="body1" sx={{ color: "text.secondary", fontWeight: 500 }}>
+              <Typography
+                variant='body1'
+                sx={{ color: "text.secondary", fontWeight: 500 }}
+              >
                 저자: {book.author}
               </Typography>
               <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
+                <Typography
+                  variant='caption'
+                  color='text.secondary'
+                  sx={{ display: "block", whiteSpace: "nowrap" }}
+                >
                   등록일 {new Date(book.createdAt).toLocaleDateString()}
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
+                <Typography
+                  variant='caption'
+                  color='text.secondary'
+                  sx={{ display: "block", whiteSpace: "nowrap" }}
+                >
                   수정일 {new Date(book.updatedAt).toLocaleDateString()}
                 </Typography>
               </Box>
             </Box>
 
-            <Divider sx={{ my: 0.5, borderColor: "#ead7b1" }} />
+            <Divider sx={{ my: 0.5, borderColor: "primary.light" }} />
 
             {book.summary && (
               <Box
                 sx={{
-                  borderLeft: "3px solid #ead7b1",
+                  borderLeft: "3px solid",
+                  borderColor: "primary.light",
                   pl: 2,
                   py: 0.5,
                   my: 1,
                 }}
               >
-                <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
+                <Typography
+                  variant='body2'
+                  sx={{ fontStyle: "italic", color: "text.secondary" }}
+                >
                   {book.summary}
                 </Typography>
               </Box>
             )}
 
             <Typography
-              variant="body1"
+              variant='body1'
               sx={{
                 lineHeight: "1.8",
                 color: "text.primary",
@@ -237,8 +270,20 @@ function BookDetailPage() {
             </Typography>
 
             {book.copy && (
-              <Box sx={{ mt: 1, p: 2, backgroundColor: "#F8F3EA", borderRadius: "10px" }}>
-                <Typography variant="body2" sx={{ color: "#8A6A44", fontWeight: "bold" }}>
+              <Box
+                sx={{
+                  mt: 1,
+                  p: 2,
+                  backgroundColor: "background.paper",
+                  borderRadius: "10px",
+                  border: "1px solid",
+                  borderColor: "primary.light",
+                }}
+              >
+                <Typography
+                  variant='body2'
+                  sx={{ color: "text.secondary", fontWeight: "bold" }}
+                >
                   AI 홍보 카피: {book.copy}
                 </Typography>
               </Box>
@@ -252,9 +297,11 @@ function BookDetailPage() {
                     sx={{
                       fontSize: "12px",
                       padding: "4px 10px",
-                      background: "#F8F3EA",
+                      backgroundColor: "background.paper",
                       borderRadius: "999px",
-                      color: "#8A6A44",
+                      color: "text.secondary",
+                      border: "1px solid",
+                      borderColor: "primary.light",
                     }}
                   >
                     {tag}
@@ -263,7 +310,7 @@ function BookDetailPage() {
               </Box>
             )}
 
-            <Divider sx={{ my: 1.5, borderColor: "#ead7b1" }} />
+            <Divider sx={{ my: 1.5, borderColor: "primary.light" }} />
 
             {/* 액션 버튼 영역 */}
             <Box
@@ -275,29 +322,27 @@ function BookDetailPage() {
                 mt: 1.5,
               }}
             >
-              {/* 목록으로 버튼 (좌측 정렬) */}
               <Button
-                variant="outlined"
-                size="small"
+                variant='outlined'
+                size='small'
                 onClick={() => navigate("/")}
-                startIcon={<ArrowBackIcon sx={{ marginRight: "6px" }} />}
+                startIcon={<ArrowBackIcon />}
                 sx={{
-                  borderColor: "#ead7b1",
-                  color: "#6b4f3a",
+                  borderColor: "primary.light",
+                  color: "text.secondary",
                   py: 0.8,
                   px: 1.5,
-                  "&:hover": { borderColor: "#c98d1a" },
+                  "&:hover": { borderColor: "primary.main" },
                 }}
               >
                 목록으로
               </Button>
 
-              {/* 액션 버튼들 (우측 정렬) */}
               <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                 <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
+                  variant='contained'
+                  color='primary'
+                  size='small'
                   onClick={() => navigate(`/books/${id}/edit`)}
                   startIcon={<EditIcon />}
                   sx={{ py: 0.8, px: 1.5 }}
@@ -305,9 +350,9 @@ function BookDetailPage() {
                   수정
                 </Button>
                 <Button
-                  variant="outlined"
-                  color="error"
-                  size="small"
+                  variant='outlined'
+                  color='error'
+                  size='small'
                   onClick={handleDelete}
                   startIcon={<DeleteIcon />}
                   sx={{ py: 0.8, px: 1.5 }}
@@ -316,10 +361,12 @@ function BookDetailPage() {
                 </Button>
                 <Button
                   variant={isLiked ? "contained" : "outlined"}
-                  color="error"
-                  size="small"
+                  color='error'
+                  size='small'
                   onClick={handleLike}
-                  startIcon={isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  startIcon={
+                    isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />
+                  }
                   sx={{ py: 0.8, px: 1.5 }}
                 >
                   좋아요

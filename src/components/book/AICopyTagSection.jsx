@@ -9,15 +9,15 @@ import {
 import SparklesIcon from "@mui/icons-material/AutoAwesome";
 
 /**
- * 한줄 카피 + 태그 입력 섹션 (AI 생성 버튼 포함)
+ * 한줄 요약 + 한줄 카피 + 태그 입력 섹션 (AI 생성 버튼 포함)
  * Props:
  *   summary     — 한줄 요약
  *   copy        — 한줄 카피
  *   tags        — string[]
  *   copyLoading — AI 생성 중 여부
  *   errors      — 유효성 에러 (없으면 빈 객체)
- *   onChange    — 카피 input onChange
- *   onAIRequest  — AI 생성 버튼 클릭 핸들러
+ *   onChange    — summary/카피 input onChange
+ *   onAIRequest — AI 생성 버튼 클릭 핸들러
  *   onAdd       — (tag: string) => void
  *   onRemove    — (index: number) => void
  */
@@ -36,57 +36,65 @@ function AICopyTagSection({
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
       {/* 한줄 요약 필드 (AI 생성 버튼 탑재) */}
       <TextField
-        name="summary"
-        label="한줄 요약"
+        name='summary'
+        label='한줄 요약'
         value={summary}
         onChange={onChange}
-        placeholder="한줄 요약을 입력하거나 AI로 생성하세요"
+        placeholder='한줄 요약을 입력하거나 AI로 생성하세요'
         error={!!errors.summary}
         helperText={errors.summary}
         fullWidth
         required
-        variant="outlined"
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={onAIRequest}
-                disabled={copyLoading}
-                startIcon={copyLoading ? <CircularProgress size={12} color="inherit" /> : <SparklesIcon />}
-                sx={{
-                  backgroundColor: "#F8F3EA",
-                  borderColor: "#ead7b1",
-                  color: "#8A6A44",
-                  fontSize: "12px",
-                  py: 0.5,
-                  px: 1.5,
-                  borderRadius: "8px",
-                  "&:hover": {
-                    borderColor: "#8A6A44",
-                    backgroundColor: "#eee7db",
-                  },
-                }}
-              >
-                {copyLoading ? "생성 중..." : "AI 생성"}
-              </Button>
-            </InputAdornment>
-          ),
+        variant='outlined'
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position='end'>
+                <Button
+                  variant='outlined'
+                  size='small'
+                  onClick={onAIRequest}
+                  disabled={copyLoading}
+                  startIcon={
+                    copyLoading ? (
+                      <CircularProgress size={12} color='inherit' />
+                    ) : (
+                      <SparklesIcon />
+                    )
+                  }
+                  sx={{
+                    backgroundColor: "background.paper",
+                    borderColor: "primary.light",
+                    color: "text.secondary",
+                    fontSize: "12px",
+                    py: 0.5,
+                    px: 1.5,
+                    borderRadius: "8px",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      backgroundColor: "rgba(201, 141, 26, 0.08)",
+                    },
+                  }}
+                >
+                  {copyLoading ? "생성 중..." : "AI 생성"}
+                </Button>
+              </InputAdornment>
+            ),
+          },
         }}
       />
 
       {/* 한줄 카피 필드 */}
       <TextField
-        name="copy"
-        label="한줄 카피"
+        name='copy'
+        label='한줄 카피'
         value={copy}
         onChange={onChange}
-        placeholder="한줄 카피를 입력하거나 AI로 생성하세요"
+        placeholder='한줄 카피를 입력하거나 AI로 생성하세요'
         error={!!errors.copy}
         helperText={errors.copy}
         fullWidth
-        variant="outlined"
+        variant='outlined'
       />
 
       {/* 태그 영역 */}
@@ -98,16 +106,14 @@ function AICopyTagSection({
                 key={i}
                 label={tag}
                 onDelete={() => onRemove(i)}
+                variant='outlined'
                 sx={{
-                  backgroundColor: "#F8F3EA",
-                  color: "#8A6A44",
-                  borderColor: "#F8F3EA",
+                  backgroundColor: "background.paper",
+                  color: "text.secondary",
                   fontFamily: "inherit",
                   "& .MuiChip-deleteIcon": {
-                    color: "#8A6A44",
-                    "&:hover": {
-                      color: "#6b4f3a",
-                    },
+                    color: "text.secondary",
+                    "&:hover": { color: "text.primary" },
                   },
                 }}
               />
@@ -115,8 +121,8 @@ function AICopyTagSection({
           </Box>
         )}
         <TextField
-          label="태그 추가"
-          placeholder="#태그 입력 후 Enter"
+          label='태그 추가'
+          placeholder='#태그 입력 후 Enter'
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -128,7 +134,7 @@ function AICopyTagSection({
             }
           }}
           fullWidth
-          variant="outlined"
+          variant='outlined'
         />
       </Box>
     </Box>

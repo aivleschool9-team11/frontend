@@ -1,54 +1,82 @@
 import { Link } from "react-router-dom";
-
-const styles = {
-  nav: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "14px 40px",
-    borderBottom: "1px solid #eee",
-    backgroundColor: "#fff",
-    position: "relative",
-  },
-  logo: {
-    fontSize: "16px",
-    fontWeight: "500",
-    color: "#222",
-    textDecoration: "none",
-  },
-  btnWrap: {
-    display: "flex",
-    gap: "8px",
-    position: "absolute",
-    right: "40px",
-  },
-  btn: {
-    padding: "6px 16px",
-    border: "1px solid #ddd",
-    borderRadius: "999px",
-    background: "#fff",
-    fontSize: "13px",
-    color: "#444",
-    textDecoration: "none",
-    display: "inline-block",
-  },
-};
+import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 
 function Navbar() {
   return (
-    <nav style={styles.nav}>
-      <Link to='/' style={styles.logo}>
-        작가의 산책
-      </Link>
-      <div style={styles.btnWrap}>
-        <Link to='/' style={styles.btn}>
-          도서 목록
+    <AppBar
+      position='static'
+      elevation={0}
+      sx={{
+        backgroundColor: "background.default",
+        borderBottom: "1px solid",
+        borderColor: "primary.light",
+      }}
+    >
+      <Toolbar
+        sx={{ justifyContent: "center", position: "relative", px: "40px" }}
+      >
+        <Link to='/' style={{ textDecoration: "none" }}>
+          <Typography
+            variant='body1'
+            sx={{
+              fontSize: "28px",
+              fontWeight: 600,
+              letterSpacing: "4px",
+              color: "text.primary",
+              "&:hover": { color: "primary.main" },
+              transition: "color 0.2s",
+            }}
+          >
+            작가의 산책
+          </Typography>
         </Link>
-        <Link to='/books/new' style={styles.btn}>
-          도서 등록
-        </Link>
-      </div>
-    </nav>
+
+        <Box
+          sx={{ display: "flex", gap: 1, position: "absolute", right: "40px" }}
+        >
+          <Button
+            component={Link}
+            to='/'
+            variant='outlined'
+            size='small'
+            startIcon={<MenuBookIcon />}
+            sx={{
+              borderColor: "primary.light",
+              color: "text.secondary",
+              borderRadius: "999px",
+              fontSize: "13px",
+              "&:hover": {
+                borderColor: "primary.main",
+                backgroundColor: "rgba(201, 141, 26, 0.08)",
+              },
+            }}
+          >
+            도서 목록
+          </Button>
+          <Button
+            component={Link}
+            to='/books/new'
+            variant='outlined'
+            size='small'
+            startIcon={<AddBoxIcon />}
+            sx={{
+              borderColor: "primary.light",
+              color: "text.secondary",
+              borderRadius: "999px",
+              fontSize: "13px",
+              "&:hover": {
+                borderColor: "primary.main",
+                backgroundColor: "rgba(201, 141, 26, 0.08)",
+              },
+            }}
+          >
+            도서 등록
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
 
