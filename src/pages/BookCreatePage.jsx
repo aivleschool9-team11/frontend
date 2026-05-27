@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBook, updateBookCover } from "../api/books";
-import { fetchAiCover, fetchAiCopyAndTags } from "../api/openai";
+import { fetchAiCover, fetchAiCopyAndTags, fetchAiEmbedding } from "../api/openai";
 import useFormValidation from "../hooks/useFormValidation";
 import BookForm from "../components/book/BookForm";
 import AICopyTagSection from "../components/book/AICopyTagSection";
@@ -57,6 +57,14 @@ function BookCreatePage() {
     const now = new Date().toISOString();
 
     try {
+      let embedding = [];
+      try {
+        const textToEmbed = `제목: ${form.title}\n저자: ${form.author}\n요약: ${form.summary}\n내용: ${form.content}`;
+        embedding = await fetchAiEmbedding(textToEmbed);
+      } catch (embErr) {
+        console.error("임베딩 생성 실패:", embErr);
+      }
+
       const created = await createBook({
         title: form.title,
         author: form.author,
@@ -65,6 +73,7 @@ function BookCreatePage() {
         copy: form.copy,
         tags: form.tags,
         coverImageUrl: "",
+        embedding,
         createdAt: now,
         updatedAt: now,
       });
