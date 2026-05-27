@@ -53,7 +53,7 @@
 
 /* 정렬 select */
 .search-sort-container select {
-  padding: 12px 16px;
+  padding: 12px 36px 12px 16px;
   border: 1px solid #ead7b1;
   border-radius: 8px;
   cursor: pointer;
@@ -62,6 +62,13 @@
   color: #4b3621;
   transition: all 0.25s ease;
   font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238A6A44'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
 }
 
 /* select hover */
