@@ -1,7 +1,20 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getBook, deleteBook } from "../api/books";
-import "../styles/BookDetailPage.css";
+import {
+  Container,
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Divider,
+} from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
 
 function BookDetailPage() {
   const { id } = useParams();
@@ -58,79 +71,265 @@ function BookDetailPage() {
     link.click();
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <p style={{ textAlign: "center", marginTop: "40px" }}>불러오는 중...</p>
+      <Typography variant="body1" sx={{ textAlign: "center", marginTop: "40px" }}>
+        불러오는 중...
+      </Typography>
     );
-  if (error)
-    return <p style={{ textAlign: "center", color: "#e55" }}>{error}</p>;
+  }
+
+  if (error) {
+    return (
+      <Typography variant="body1" sx={{ textAlign: "center", color: "#e55", marginTop: "40px" }}>
+        {error}
+      </Typography>
+    );
+  }
 
   return (
-    <div className='detail-container'>
-      <div className='detail-layout'>
-        <div className='detail-cover-wrap'>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Paper
+        elevation={2}
+        sx={{
+          p: { xs: 3, md: 5 },
+          backgroundColor: "#fffaf3",
+          borderRadius: "20px",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.05), 0 2px 8px rgba(201,141,26,0.12)",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 4,
+            alignItems: "flex-start",
+          }}
+        >
+          {/* 표지 영역 */}
           {book.coverImageUrl ? (
-            <>
-              <img
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1.5,
+                width: { xs: "100%", md: "200px" },
+                alignSelf: { xs: "center", md: "flex-start" },
+                flexShrink: 0,
+              }}
+            >
+              <Box
+                component="img"
                 src={book.coverImageUrl}
                 alt={book.title}
-                className='detail-cover'
+                sx={{
+                  width: "100%",
+                  height: { xs: "auto", md: "280px" },
+                  maxHeight: { xs: "300px", md: "none" },
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                }}
               />
-              <button className='detail-download-btn' onClick={handleDownload}>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={handleDownload}
+                startIcon={<DownloadIcon />}
+                sx={{
+                  borderColor: "#ead7b1",
+                  color: "#6b4f3a",
+                  width: "100%",
+                  py: 0.8,
+                  fontFamily: "inherit",
+                  "&:hover": { borderColor: "#c98d1a", backgroundColor: "#fff5f0" },
+                }}
+              >
                 표지 다운로드
-              </button>
-            </>
+              </Button>
+            </Box>
           ) : (
-            <div className='detail-no-cover'>no image</div>
-          )}
-        </div>
-
-        <div className='detail-info'>
-          <h1>{book.title}</h1>
-          <p className='detail-author'>{book.author}</p>
-          {book.summary && <p className='detail-summary'>{book.summary}</p>}
-          {book.copy && <p className='detail-copy'>{book.copy}</p>}
-          <p className='detail-content'>{book.content}</p>
-          <p className='detail-date'>
-            등록일 {new Date(book.createdAt).toLocaleDateString()}
-          </p>
-          <p className='detail-date'>
-            수정일 {new Date(book.updatedAt).toLocaleDateString()}
-          </p>
-          <div className='detail-btn-row'>
-            <button className='detail-btn' onClick={() => navigate("/")}>
-              목록으로
-            </button>
-            <button
-              className='detail-btn'
-              onClick={() => navigate(`/books/${id}/edit`)}
+            <Box
+              sx={{
+                width: "200px",
+                height: "280px",
+                background: "#f5f5f5",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#bbb",
+                fontSize: "13px",
+                border: "1px dashed #ccc",
+                alignSelf: { xs: "center", md: "flex-start" },
+                flexShrink: 0,
+              }}
             >
-              수정
-            </button>
-            <button className='detail-delete-btn' onClick={handleDelete}>
-              삭제
-            </button>
-            <button
-              className='detail-like-btn'
-              onClick={handleLike}
-              style={{ color: isLiked ? "#e55" : "#aaa" }}
-            >
-              {isLiked ? "♥" : "♡"} 좋아요
-            </button>
-          </div>
-
-          {book.tags && book.tags.length > 0 && (
-            <div className='detail-tag-wrap'>
-              {book.tags.map((tag, i) => (
-                <span key={i} className='detail-tag'>
-                  {tag}
-                </span>
-              ))}
-            </div>
+              no image
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
+
+          {/* 도서 정보 */}
+          <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: "28px", md: "36px" },
+                color: "#b87912",
+                textAlign: "left",
+                mb: 0.5,
+                fontWeight: 500,
+                letterSpacing: "0px",
+              }}
+            >
+              {book.title}
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "flex-start", sm: "center" },
+                gap: 1,
+              }}
+            >
+              <Typography variant="body1" sx={{ color: "text.secondary", fontWeight: 500 }}>
+                저자: {book.author}
+              </Typography>
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
+                  등록일 {new Date(book.createdAt).toLocaleDateString()}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
+                  수정일 {new Date(book.updatedAt).toLocaleDateString()}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 0.5, borderColor: "#ead7b1" }} />
+
+            {book.summary && (
+              <Box
+                sx={{
+                  borderLeft: "3px solid #ead7b1",
+                  pl: 2,
+                  py: 0.5,
+                  my: 1,
+                }}
+              >
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "text.secondary" }}>
+                  {book.summary}
+                </Typography>
+              </Box>
+            )}
+
+            <Typography
+              variant="body1"
+              sx={{
+                lineHeight: "1.8",
+                color: "text.primary",
+                whiteSpace: "pre-line",
+                minHeight: "100px",
+              }}
+            >
+              {book.content}
+            </Typography>
+
+            {book.copy && (
+              <Box sx={{ mt: 1, p: 2, backgroundColor: "#F8F3EA", borderRadius: "10px" }}>
+                <Typography variant="body2" sx={{ color: "#8A6A44", fontWeight: "bold" }}>
+                  AI 홍보 카피: {book.copy}
+                </Typography>
+              </Box>
+            )}
+
+            {book.tags && book.tags.length > 0 && (
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}>
+                {book.tags.map((tag, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      fontSize: "12px",
+                      padding: "4px 10px",
+                      background: "#F8F3EA",
+                      borderRadius: "999px",
+                      color: "#8A6A44",
+                    }}
+                  >
+                    {tag}
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            <Divider sx={{ my: 1.5, borderColor: "#ead7b1" }} />
+
+            {/* 액션 버튼 영역 */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+                mt: 1.5,
+              }}
+            >
+              {/* 목록으로 버튼 (좌측 정렬) */}
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => navigate("/")}
+                startIcon={<ArrowBackIcon sx={{ marginRight: "6px" }} />}
+                sx={{
+                  borderColor: "#ead7b1",
+                  color: "#6b4f3a",
+                  py: 0.8,
+                  px: 1.5,
+                  "&:hover": { borderColor: "#c98d1a" },
+                }}
+              >
+                목록으로
+              </Button>
+
+              {/* 액션 버튼들 (우측 정렬) */}
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={() => navigate(`/books/${id}/edit`)}
+                  startIcon={<EditIcon />}
+                  sx={{ py: 0.8, px: 1.5 }}
+                >
+                  수정
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  onClick={handleDelete}
+                  startIcon={<DeleteIcon />}
+                  sx={{ py: 0.8, px: 1.5 }}
+                >
+                  삭제
+                </Button>
+                <Button
+                  variant={isLiked ? "contained" : "outlined"}
+                  color="error"
+                  size="small"
+                  onClick={handleLike}
+                  startIcon={isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  sx={{ py: 0.8, px: 1.5 }}
+                >
+                  좋아요
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
   );
 }
 

@@ -1,4 +1,14 @@
-import { formStyles } from "./FormStyles";
+import {
+  Box,
+  Button,
+  Typography,
+  Collapse,
+  CircularProgress,
+  Paper,
+} from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import SparklesIcon from "@mui/icons-material/AutoAwesome";
 
 /**
  * AI 표지 생성 섹션
@@ -19,58 +29,71 @@ function AICoverSection({
   onSelectCover,
 }) {
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: "6px",
-        overflow: "hidden",
+    <Paper
+      elevation={0}
+      sx={{
+        border: "1px solid #ead7b1",
+        borderRadius: "12px",
+        overflow: "hidden", // 삐져나온 배경색 클립 처리
+        backgroundColor: "#fffdf8",
       }}
     >
-      <button
-        type='button'
+      <Button
+        type="button"
         onClick={onToggle}
-        style={{
-          ...formStyles.btn,
-          width: "100%",
-          padding: "10px 14px",
-          background: "#f5f0ff",
-          border: "none",
+        fullWidth
+        sx={{
+          padding: "12px 16px",
+          background: "#F8F3EA",
+          color: "#8A6A44",
+          borderTopLeftRadius: "11px",
+          borderTopRightRadius: "11px",
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
           display: "flex",
           justifyContent: "space-between",
-          fontSize: "13px",
-          color: "#7c3aed",
+          alignItems: "center",
+          "&:hover": {
+            background: "#eee7db",
+          },
         }}
       >
-        <span>AI 표지 생성</span>
-        <span>{showAI ? "▲" : "▼"}</span>
-      </button>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <SparklesIcon sx={{ fontSize: "18px" }} />
+          <Typography variant="body2" sx={{ fontWeight: "bold", fontSize: "14px", fontFamily: "inherit" }}>
+            AI 표지 생성
+          </Typography>
+        </Box>
+        {showAI ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+      </Button>
 
-      {showAI && (
-        <div
-          style={{
-            padding: "14px",
+      <Collapse in={showAI}>
+        <Box
+          sx={{
+            padding: 2,
             display: "flex",
             flexDirection: "column",
-            gap: "10px",
-            borderTop: "1px solid #eee",
+            gap: 2,
+            borderTop: "1px solid #ead7b1",
           }}
         >
-          <div
-            style={{
+          <Box
+            sx={{
               height: "300px",
-              background: "#f5f5f5",
-              borderRadius: "6px",
-              border: "1px dashed #ccc",
+              background: "#faf6ee",
+              borderRadius: "8px",
+              border: "1px dashed #c98d1a",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
+              position: "relative",
             }}
           >
             {previewImage ? (
               <img
                 src={previewImage}
-                alt='AI 생성 표지'
+                alt="AI 생성 표지"
                 style={{
                   width: "100%",
                   height: "100%",
@@ -78,62 +101,93 @@ function AICoverSection({
                 }}
               />
             ) : (
-              <span style={{ color: "#bbb", fontSize: "13px" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 표지 생성 후 미리보기
-              </span>
+              </Typography>
             )}
-          </div>
-          {!previewImage && (
-            <button
-              type='button'
-              onClick={onAIRequest}
-              disabled={loading}
-              style={{
-                ...formStyles.btn,
-                cursor: loading ? "not-allowed" : "pointer",
-                fontSize: "13px",
-                background: loading ? "#f5f5f5" : "#fff",
-              }}
-            >
-              {loading ? "--- 생성 중 ---" : "AI 표지 생성"}
-            </button>
-          )}
-          {previewImage && (
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button
-                type='button'
-                onClick={onAIRequest}
-                disabled={loading}
-                style={{
-                  ...formStyles.btn,
-                  flex: 1,
-                  padding: "8px",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  background: loading ? "#f5f5f5" : "#fff",
+            {loading && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1.5,
                 }}
               >
-                {loading ? "--- 생성 중 ---" : "재생성"}
-              </button>
-              <button
-                type='button'
+                <CircularProgress color="secondary" />
+                <Typography variant="body2" sx={{ fontWeight: "bold", color: "secondary.main" }}>
+                  AI가 표지를 그리는 중...
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          {!previewImage && (
+            <Button
+              variant="contained"
+              onClick={onAIRequest}
+              disabled={loading}
+              fullWidth
+              sx={{
+                background: "#8A6A44",
+                color: "#fff",
+                "&:hover": {
+                  background: "#705332",
+                },
+                py: 1.2,
+              }}
+              startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <SparklesIcon />}
+            >
+              {loading ? "생성 중..." : "AI 표지 생성"}
+            </Button>
+          )}
+
+          {previewImage && (
+            <Box sx={{ display: "flex", gap: 1.5 }}>
+              <Button
+                variant="outlined"
+                onClick={onAIRequest}
+                disabled={loading}
+                fullWidth
+                sx={{
+                  borderColor: "#ead7b1",
+                  color: "#8A6A44",
+                  "&:hover": {
+                    borderColor: "#8A6A44",
+                    background: "#eee7db",
+                  },
+                }}
+                startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
+              >
+                {loading ? "생성 중..." : "재생성"}
+              </Button>
+              <Button
+                variant="contained"
                 onClick={onSelectCover}
                 disabled={loading}
-                style={{
-                  ...formStyles.btn,
-                  flex: 1,
-                  padding: "8px",
-                  border: "1px solid #bbb",
-                  background: loading ? "#e0e0e0" : "#f0f0f0",
-                  cursor: loading ? "not-allowed" : "pointer",
+                fullWidth
+                sx={{
+                  background: "#8A6A44",
+                  color: "#fff",
+                  "&:hover": {
+                    background: "#705332",
+                  },
                 }}
               >
                 이 표지 사용
-              </button>
-            </div>
+              </Button>
+            </Box>
           )}
-        </div>
-      )}
-    </div>
+        </Box>
+      </Collapse>
+    </Paper>
   );
 }
 

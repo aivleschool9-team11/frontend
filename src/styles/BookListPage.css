@@ -1,86 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap');
 
 /* 전체 페이지 */
 .book-list-page {
   min-height: 100vh;
-
-  padding: 60px 90px;
-
+  padding: 60px 40px;
   font-family: 'Gowun Batang', serif;
-
-  background-color: #fffdf8;
-
-  background-image:
-    radial-gradient(#f1e3c8 1px, transparent 1px);
-
-  background-size: 24px 24px;
+  background-color: #FAF8F5; /* 차분하고 고급스러운 연한 아이보리 웜그레이 */
+  background-image: radial-gradient(rgba(201, 141, 26, 0.04) 1.5px, transparent 1.5px);
+  background-size: 32px 32px; /* 도트 간격을 넓혀 눈을 훨씬 편하게 만듦 */
 }
 
 /* 제목 */
 .book-list-page h1 {
   text-align: center;
-
-  margin-bottom: 50px;
-
-  color: #b87912;
-
-  font-size: 64px;
-
-  letter-spacing: 4px;
-
-  text-shadow: 2px 2px 8px rgba(201,141,26,0.15);
+  margin-bottom: 48px;
+  color: #8d5c0e; /* 살짝 톤다운되어 차분한 황동 골드 */
+  font-size: 32px; /* 64px에서 32px로 정갈하게 축소 */
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 3px rgba(141, 92, 14, 0.1);
 }
 
 /* 검색 + 정렬 영역 */
 .search-sort-container {
   display: flex;
-
-  gap: 16px;
-
-  margin-bottom: 40px;
+  gap: 12px;
+  margin-bottom: 36px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* 검색창 */
 .search-sort-container input {
   flex: 1;
-
-  padding: 14px 18px;
-
-  border: 2px solid #ead7b1;
-
-  border-radius: 16px;
-
-  font-size: 16px;
-
+  padding: 12px 16px;
+  border: 1px solid #ead7b1; /* 보더 굵기를 1px로 줄여 날렵하게 만듦 */
+  border-radius: 8px; /* 16px에서 8px로 다듬음 */
+  font-size: 14px;
   outline: none;
-
-  background-color: #fffdf8;
-
-  transition: 0.3s;
+  background-color: #ffffff;
+  color: #4b3621;
+  transition: all 0.25s ease;
+  font-family: inherit;
 }
 
 /* 검색창 focus */
 .search-sort-container input:focus {
   border-color: #c98d1a;
-
-  box-shadow: 0 0 10px rgba(201, 141, 26, 0.2);
+  box-shadow: 0 0 8px rgba(201, 141, 26, 0.15);
 }
 
 /* 정렬 select */
 .search-sort-container select {
-  padding: 14px 18px;
-
-  border: 2px solid #ead7b1;
-
-  border-radius: 16px;
-
+  padding: 12px 36px 12px 16px;
+  border: 1px solid #ead7b1;
+  border-radius: 8px;
   cursor: pointer;
-
-  font-size: 15px;
-
-  background-color: white;
-
-  transition: 0.3s;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #4b3621;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238A6A44'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
 }
 
 /* select hover */
@@ -88,145 +76,149 @@
   border-color: #c98d1a;
 }
 
-/* 도서 목록 */
+/* 도서 목록 컨테이너 */
 .bookshelf {
   display: flex;
-
   flex-direction: column;
-
-  gap: 28px;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* 책 카드 */
 .book-item {
   display: flex;
-
-  gap: 28px;
-
-  border-radius: 28px;
-
-  padding: 28px;
-
-  background: linear-gradient(
-    to bottom right,
-    #fffaf3,
-    #fff7eb
-  );
-
-  box-shadow:
-    0 8px 20px rgba(0,0,0,0.05),
-    0 2px 8px rgba(201,141,26,0.12);
-
-  backdrop-filter: blur(6px);
-
-  transition: 0.3s;
-
-  animation: fadeUp 0.5s ease;
+  gap: 24px;
+  border-radius: 12px; /* 28px에서 12px로 트렌디하게 깎음 */
+  padding: 24px;
+  background-color: #ffffff; /* 누런 그라데이션 대신 깨끗한 단색 화이트 */
+  border: 1px solid #f0e6d6; /* 연하고 얇은 베이지 테두리선 */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(201, 141, 26, 0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: fadeUp 0.4s ease-out;
 }
 
 /* hover 효과 */
 .book-item:hover {
-  transform: translateY(-10px);
+  transform: translateY(-4px); /* 10px 붕 뜨는 모션을 4px로 부드럽게 튜닝 */
+  box-shadow: 0 10px 24px rgba(75, 54, 33, 0.06), 0 3px 8px rgba(201, 141, 26, 0.08);
+}
 
-  box-shadow:
-    0 20px 40px rgba(0,0,0,0.12),
-    0 4px 12px rgba(201,141,26,0.18);
+/* 이미지 컨테이너 */
+.book-cover-wrap {
+  width: 120px;
+  height: 160px;
+  background-color: #f8f6f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #bbb;
+  border-radius: 6px;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
 /* 이미지 */
 .book-item img {
-  border-radius: 14px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
 /* 이미지 hover */
-.book-item img:hover {
-  transform: scale(1.05);
-
-  transition: 0.3s;
+.book-item:hover img {
+  transform: scale(1.03); /* 스케일을 살짝만 주어 고급스럽게 연출 */
 }
 
-/* 제목 */
+/* 카드 텍스트 정보 구역 */
+.book-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* 책 제목 */
 .book-item h2 {
-  color: #b87912;
-
-  font-size: 38px;
-
-  margin-bottom: 14px;
-
-  transition: 0.3s;
+  color: #4b3621; /* 강한 골드 대신 중후한 딥브라운으로 시선 정돈 */
+  font-size: 20px; /* 38px에서 20px로 정갈하게 정돈 */
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 8px;
+  transition: color 0.2s ease;
 }
 
-/* 제목 hover */
-.book-item h2:hover {
-  color: #d49a25;
+.book-item:hover h2 {
+  color: #8d5c0e; /* 호버 시에만 골드 브라운으로 포인트 */
 }
 
-/* 본문 */
+/* 책 메타 정보 */
+.book-meta {
+  font-size: 13px;
+  color: #8a705e;
+  margin-bottom: 6px;
+}
+
+/* 본문 요약 */
 .book-item p {
-  line-height: 1.7;
-
-  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6b523e;
+  margin-bottom: 12px;
 }
 
-/* 좋아요 */
-.book-item p:last-of-type {
+/* 좋아요 하트 표시 */
+.like-heart {
   color: #e06767;
-
-  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
 }
 
-/* 버튼 */
+/* 상세 보기 버튼 */
 .book-item button {
-  margin-top: 16px;
-
-  padding: 12px 24px;
-
+  margin-top: 8px;
+  padding: 8px 18px;
   border: none;
-
-  border-radius: 14px;
-
-  background-color: #c98d1a;
-
-  color: white;
-
+  border-radius: 6px;
+  background-color: #5c4033; /* 딥 브라운 골드로 분위기 정갈하게 다운 */
+  color: #ffffff;
   cursor: pointer;
-
-  font-weight: bold;
-
-  letter-spacing: 1px;
-
-  transition: 0.3s;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  width: fit-content;
+  font-family: inherit;
 }
 
 /* 버튼 hover */
 .book-item button:hover {
-  background-color: #a87412;
-
-  transform: scale(1.05);
+  background-color: #412c22;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(92, 64, 51, 0.15);
 }
 
 /* 데이터 없을 때 */
 .empty-text {
   text-align: center;
-
-  color: #999;
-
-  margin-top: 40px;
-
-  font-size: 18px;
+  color: #8a705e;
+  margin-top: 60px;
+  font-size: 16px;
 }
 
 /* 카드 등장 애니메이션 */
 @keyframes fadeUp {
   from {
     opacity: 0;
-
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
-
   to {
     opacity: 1;
-
     transform: translateY(0);
   }
 }

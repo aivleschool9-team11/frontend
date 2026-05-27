@@ -1,7 +1,7 @@
-import { formStyles } from "./FormStyles";
+import { TextField, Box } from "@mui/material";
 
 /**
- * BookCreatePage / BookEditPage 공통 입력 필드
+ * BookCreatePage / BookEditPage 공통 입력 필드 (한줄 요약 summary는 AICopyTagSection으로 이전됨)
  * Props:
  *   form     — { title, author, content }
  *   errors   — useFormValidation의 errors (없으면 빈 객체)
@@ -9,70 +9,50 @@ import { formStyles } from "./FormStyles";
  */
 function BookForm({ form, errors = {}, onChange }) {
   return (
-    <>
-      <div style={formStyles.fieldWrap}>
-        <label>
-          제목 <span style={{ color: "#e55" }}>*</span>
-        </label>
-        <input
-          name='title'
-          value={form.title}
-          onChange={onChange}
-          placeholder='제목을 입력하세요 (최대 100자)'
-          maxLength={100}
-          style={{
-            ...formStyles.input,
-            borderColor: errors.title ? "#e55" : "#ddd",
-          }}
-        />
-        {errors.title && <p style={formStyles.errorMsg}>{errors.title}</p>}
-      </div>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+      <TextField
+        name="title"
+        label="제목"
+        value={form.title}
+        onChange={onChange}
+        placeholder="제목을 입력하세요 (최대 100자)"
+        inputProps={{ maxLength: 100 }}
+        error={!!errors.title}
+        helperText={errors.title}
+        fullWidth
+        required
+        variant="outlined"
+      />
 
-      <div style={formStyles.fieldWrap}>
-        <label>
-          저자 <span style={{ color: "#e55" }}>*</span>
-        </label>
-        <input
-          name='author'
-          value={form.author}
-          onChange={onChange}
-          placeholder='저자를 입력하세요'
-          style={{
-            ...formStyles.input,
-            borderColor: errors.author ? "#e55" : "#ddd",
-          }}
-        />
-        {errors.author && <p style={formStyles.errorMsg}>{errors.author}</p>}
-      </div>
+      <TextField
+        name="author"
+        label="저자"
+        value={form.author}
+        onChange={onChange}
+        placeholder="저자를 입력하세요"
+        error={!!errors.author}
+        helperText={errors.author}
+        fullWidth
+        required
+        variant="outlined"
+      />
 
-      <div style={formStyles.fieldWrap}>
-        <label>
-          본문 내용 <span style={{ color: "#e55" }}>*</span>
-        </label>
-        <textarea
-          name='content'
-          value={form.content}
-          onChange={onChange}
-          placeholder='본문 내용을 입력하세요 (최대 5000자)'
-          maxLength={5000}
-          style={{
-            ...formStyles.textarea,
-            borderColor: errors.content ? "#e55" : "#ddd",
-          }}
-        />
-        <p
-          style={{
-            fontSize: "12px",
-            color: "#aaa",
-            textAlign: "right",
-            margin: 0,
-          }}
-        >
-          {form.content.length} / 5000
-        </p>
-        {errors.content && <p style={formStyles.errorMsg}>{errors.content}</p>}
-      </div>
-    </>
+      <TextField
+        name="content"
+        label="본문 내용"
+        value={form.content}
+        onChange={onChange}
+        placeholder="본문 내용을 입력하세요 (최대 5000자)"
+        inputProps={{ maxLength: 5000 }}
+        error={!!errors.content}
+        helperText={errors.content || `${form.content.length} / 5000`}
+        fullWidth
+        multiline
+        rows={6}
+        required
+        variant="outlined"
+      />
+    </Box>
   );
 }
 

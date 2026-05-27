@@ -13,7 +13,7 @@ const styles = {
 function Footer() {
   return (
     <footer style={styles.footer}>
-      <p style={styles.text}>©2026 AbleSchool Library, All rights reserved</p>
+      <p style={styles.text}>©2026 AivleSchool Library, All rights reserved</p>
     </footer>
   );
 }

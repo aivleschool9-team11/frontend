@@ -33,10 +33,10 @@ function BookListPage() {
   }, []);
 
   useEffect(() => {
-  const handleFocus = () => setLikedIds(getLikedIds());
-  window.addEventListener("focus", handleFocus);
-  return () => window.removeEventListener("focus", handleFocus);
-}, []);
+    const handleFocus = () => setLikedIds(getLikedIds());
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
 
   // 검색 필터
   const filterdBooks = books.filter(
@@ -47,8 +47,8 @@ function BookListPage() {
 
   // 좋아요 필터
   const likedFilteredBooks = sortOrder === "liked"
-  ? filterdBooks.filter((book) => likedIds.includes(String(book.id)))
-  : filterdBooks;
+    ? filterdBooks.filter((book) => likedIds.includes(String(book.id)))
+    : filterdBooks;
 
   // 정렬
   const sortedBooks = [...likedFilteredBooks].sort((a, b) => {
@@ -63,13 +63,17 @@ function BookListPage() {
 
   if (loading) {
     return (
-      <p style={{ textAlign: "center", marginTop: "40px" }}>불러오는 중...</p>
+      <p style={{ textAlign: "center", marginTop: "60px", color: "#8a705e", fontFamily: "'Gowun Batang', serif" }}>
+        불러오는 중...
+      </p>
     );
   }
 
   if (error) {
     return (
-      <p style={{ textAlign: "center", color: "red" }}>{error}</p>
+      <p style={{ textAlign: "center", color: "#e06767", marginTop: "60px", fontFamily: "'Gowun Batang', serif" }}>
+        {error}
+      </p>
     );
   }
 
@@ -96,7 +100,6 @@ function BookListPage() {
         </select>
       </div>
 
-
       {/* 도서 목록 */}
       {sortedBooks.length === 0 ? (
         <p className="empty-text">
@@ -109,53 +112,35 @@ function BookListPage() {
       ) : (
         <div className="bookshelf">
           {sortedBooks.map((book) => (
-            <div
-              key={book.id}
-              className="book-item"
-            >
+            <div key={book.id} className="book-item">
               {/* 표지 이미지 */}
-              <div
-                style={{
-                  width: "140px",
-                  height: "180px",
-                  backgroundColor: "#f1f1f1",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "#888",
-                  borderRadius: "8px",
-                  flexShrink: 0,
-                  overflow: "hidden",
-                }}
-              >
+              <div className="book-cover-wrap">
                 {book.coverImageUrl ? (
                   <img
                     src={book.coverImageUrl}
                     alt={book.title}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
                 ) : (
-                  "no image"
+                  <span>no image</span>
                 )}
               </div>
 
               {/* 도서 정보 */}
-              <div>
-                <h2>{book.title}</h2>
-
-                <p>저자: {book.author}</p>
+              <div className="book-info">
+                <div>
+                  <h2>{book.title}</h2>
+                  <div className="book-meta">저자: {book.author}</div>
+                  <p>{book.summary}</p>
+                </div>
                 
-                <p>{book.summary}</p>
-
-                <p style={{ fontSize: "13px", color: "#e55", margin: "6px 0" }}>
-                  {likedIds.includes(String(book.id)) ? "♥" : "♡"}
-                </p>
-
-                <Link to={`/books/${book.id}`}>
-                  <button>
-                    상세 보기
-                  </button>
-                </Link>
+                <div>
+                  <div className="like-heart">
+                    {likedIds.includes(String(book.id)) ? "♥" : "♡"} 좋아요
+                  </div>
+                  <Link to={`/books/${book.id}`}>
+                    <button>상세 보기</button>
+                  </Link>
+                </div>
               </div>
             </div>
           ))}

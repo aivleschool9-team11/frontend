@@ -5,36 +5,42 @@ import BookListPage from "./pages/BookListPage";
 import BookDetailPage from "./pages/BookDetailPage";
 import BookCreatePage from "./pages/BookCreatePage";
 import BookEditPage from "./pages/BookEditPage";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "./theme";
 
 function App() {
   return (
-    <BrowserRouter>
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Navbar />
-
-        <main
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <div
           style={{
-            flex: 1,
-            padding: "32px 40px",
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          <Routes>
-            <Route path="/" element={<BookListPage />} />
-            <Route path="/books/new" element={<BookCreatePage />} />
-            <Route path="/books/:id" element={<BookDetailPage />} />
-            <Route path="/books/:id/edit" element={<BookEditPage />} />
-          </Routes>
-        </main>
+          <Navbar />
 
-        <Footer />
-      </div>
-    </BrowserRouter>
+          <main
+            style={{
+              flex: 1,
+              padding: "32px 40px",
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<BookListPage />} />
+              <Route path="/books/new" element={<BookCreatePage />} />
+              <Route path="/books/:id" element={<BookDetailPage />} />
+              <Route path="/books/:id/edit" element={<BookEditPage />} />
+            </Routes>
+          </main>
+
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
