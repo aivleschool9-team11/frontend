@@ -1,4 +1,4 @@
-import { formStyles } from "./formStyles";
+import { formStyles } from "./FormStyles";
 
 /**
  * AI 표지 생성 섹션

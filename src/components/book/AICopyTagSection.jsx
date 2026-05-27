@@ -1,4 +1,4 @@
-import { formStyles } from "./formStyles";
+import { formStyles } from "./FormStyles";
 
 /**
  * 한줄 카피 + 태그 입력 섹션 (AI 생성 버튼 포함)

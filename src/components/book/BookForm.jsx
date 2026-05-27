@@ -1,4 +1,4 @@
-import { formStyles } from "./formStyles";
+import { formStyles } from "./FormStyles";
 
 /**
  * BookCreatePage / BookEditPage 공통 입력 필드

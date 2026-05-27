@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBook, updateBook } from "../api/books";
 import { fetchAiCover, fetchAiCopyAndTags } from "../api/openai";
-import { formStyles } from "../components/book/formStyles";
+import { formStyles } from "../components/book/FormStyles";
 import BookForm from "../components/book/BookForm";
 import AICopyTagSection from "../components/book/AICopyTagSection";
 import AICoverSection from "../components/book/AICoverSection";
