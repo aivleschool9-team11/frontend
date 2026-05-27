@@ -44,8 +44,8 @@ function AICoverSection({
         fullWidth
         sx={{
           padding: "12px 16px",
-          background: "#f5f0ff",
-          color: "#7c3aed",
+          background: "#F8F3EA",
+          color: "#8A6A44",
           borderTopLeftRadius: "11px",
           borderTopRightRadius: "11px",
           borderBottomLeftRadius: 0,
@@ -54,7 +54,7 @@ function AICoverSection({
           justifyContent: "space-between",
           alignItems: "center",
           "&:hover": {
-            background: "#ebe3fc",
+            background: "#eee7db",
           },
         }}
       >
@@ -136,10 +136,10 @@ function AICoverSection({
               disabled={loading}
               fullWidth
               sx={{
-                background: "#7c3aed",
+                background: "#8A6A44",
                 color: "#fff",
                 "&:hover": {
-                  background: "#6d28d9",
+                  background: "#705332",
                 },
                 py: 1.2,
               }}
@@ -157,11 +157,11 @@ function AICoverSection({
                 disabled={loading}
                 fullWidth
                 sx={{
-                  borderColor: "#7c3aed",
-                  color: "#7c3aed",
+                  borderColor: "#ead7b1",
+                  color: "#8A6A44",
                   "&:hover": {
-                    borderColor: "#6d28d9",
-                    background: "rgba(124, 58, 237, 0.04)",
+                    borderColor: "#8A6A44",
+                    background: "#eee7db",
                   },
                 }}
                 startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
@@ -174,10 +174,10 @@ function AICoverSection({
                 disabled={loading}
                 fullWidth
                 sx={{
-                  background: "#7c3aed",
+                  background: "#8A6A44",
                   color: "#fff",
                   "&:hover": {
-                    background: "#6d28d9",
+                    background: "#705332",
                   },
                 }}
               >

@@ -219,8 +219,8 @@ function BookDetailPage() {
             </Typography>
 
             {book.copy && (
-              <Box sx={{ mt: 1, p: 2, backgroundColor: "#f5f0ff", borderRadius: "10px" }}>
-                <Typography variant="body2" sx={{ color: "#7c3aed", fontWeight: "bold" }}>
+              <Box sx={{ mt: 1, p: 2, backgroundColor: "#F8F3EA", borderRadius: "10px" }}>
+                <Typography variant="body2" sx={{ color: "#8A6A44", fontWeight: "bold" }}>
                   AI 홍보 카피: {book.copy}
                 </Typography>
               </Box>
@@ -234,9 +234,9 @@ function BookDetailPage() {
                     sx={{
                       fontSize: "12px",
                       padding: "4px 10px",
-                      background: "#f5f0ff",
+                      background: "#F8F3EA",
                       borderRadius: "999px",
-                      color: "#7c3aed",
+                      color: "#8A6A44",
                     }}
                   >
                     {tag}

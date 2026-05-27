@@ -56,15 +56,16 @@ function AICopyTagSection({
                 disabled={copyLoading}
                 startIcon={copyLoading ? <CircularProgress size={12} color="inherit" /> : <SparklesIcon />}
                 sx={{
-                  borderColor: "#7c3aed",
-                  color: "#7c3aed",
+                  backgroundColor: "#F8F3EA",
+                  borderColor: "#ead7b1",
+                  color: "#8A6A44",
                   fontSize: "12px",
                   py: 0.5,
                   px: 1.5,
                   borderRadius: "8px",
                   "&:hover": {
-                    borderColor: "#6d28d9",
-                    background: "rgba(124, 58, 237, 0.04)",
+                    borderColor: "#8A6A44",
+                    backgroundColor: "#eee7db",
                   },
                 }}
               >
@@ -98,14 +99,14 @@ function AICopyTagSection({
                 label={tag}
                 onDelete={() => onRemove(i)}
                 sx={{
-                  backgroundColor: "#f5f0ff",
-                  color: "#7c3aed",
-                  borderColor: "#f5f0ff",
+                  backgroundColor: "#F8F3EA",
+                  color: "#8A6A44",
+                  borderColor: "#F8F3EA",
                   fontFamily: "inherit",
                   "& .MuiChip-deleteIcon": {
-                    color: "#7c3aed",
+                    color: "#8A6A44",
                     "&:hover": {
-                      color: "#6d28d9",
+                      color: "#6b4f3a",
                     },
                   },
                 }}
