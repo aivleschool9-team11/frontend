@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getBooks } from "../api/books";
+import "../styles/BookListPage.css";
 
 function BookListPage() {
   const [books, setBooks] = useState([]);
@@ -74,49 +75,19 @@ function BookListPage() {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "900px",
-        margin: "0 auto",
-      }}
-    >
-      <h1
-        style={{
-          textAlign: "center",
-          marginBottom: "40px",
-        }}
-      >
-        도서 목록
-      </h1>
+    <div className="book-list-page">
+      <h1>도서 목록</h1>
 
       {/* 검색 + 정렬 UI */}
-      <div 
-        style={{ 
-          display: "flex", 
-          gap: "12px", 
-          marginBottom: "32px" }}>
+      <div className="search-sort-container">
         <input
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
           placeholder="제목 또는 저자 검색"
-          style={{
-            flex: 1,
-            padding: "10px 14px",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            fontSize: "14px",
-          }}
         />
         <select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
-          style={{
-            padding: "10px 14px",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            fontSize: "14px",
-            cursor: "pointer",
-          }}
         >
           <option value="newest">최신순</option>
           <option value="oldest">오래된순</option>
@@ -130,10 +101,7 @@ function BookListPage() {
 
       {/* 도서 목록 */}
       {sortedBooks.length === 0 ? (
-        <p style={{
-          textAlign: "center", 
-          color: "#999", 
-          marginTop: "40px" }}>
+        <p className="empty-text">
           {sortOrder === "liked"
             ? "좋아요한 도서가 없습니다."
             : searchKeyword
@@ -141,23 +109,11 @@ function BookListPage() {
             : "등록된 도서가 없습니다."}
         </p>
       ) : (
-        <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "24px",
-        }}>
+        <div className="bookshelf">
           {sortedBooks.map((book) => (
             <div
               key={book.id}
-              style={{
-                display: "flex",
-                gap: "24px",
-                border: "1px solid #ddd",
-                borderRadius: "12px",
-                padding: "20px",
-                alignItems: "center",
-              }}
+              className="book-item"
             >
               {/* 표지 이미지 */}
               <div
@@ -198,17 +154,7 @@ function BookListPage() {
                 </p>
 
                 <Link to={`/books/${book.id}`}>
-                  <button
-                    style={{
-                      marginTop: "12px",
-                      padding: "10px 20px",
-                      border: "none",
-                      borderRadius: "8px",
-                      backgroundColor: "#1f2937",
-                      color: "white",
-                      cursor: "pointer",
-                    }}
-                  >
+                  <button>
                     상세 보기
                   </button>
                 </Link>
