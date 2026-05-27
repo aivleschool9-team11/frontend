@@ -57,6 +57,7 @@ function BookListPage() {
       return new Date(a.createdAt) - new Date(b.createdAt);
     if (sortOrder === "title") return a.title.localeCompare(b.title);
     if (sortOrder === "author") return a.author.localeCompare(b.author);
+    if (sortOrder === "likes") return (b.likes || 0) - (a.likes || 0);
     return 0;
   });
 
@@ -121,6 +122,7 @@ function BookListPage() {
           <option value="oldest">오래된순</option>
           <option value="title">제목순</option>
           <option value="author">작가명순</option>
+          <option value="likes">좋아요순</option>
           <option value="liked">좋아요한 책</option>
         </select>
       </div>
@@ -192,7 +194,7 @@ function BookListPage() {
                 <p>{book.summary}</p>
 
                 <p style={{ fontSize: "13px", color: "#e55", margin: "6px 0" }}>
-                  {likedIds.includes(String(book.id)) ? "♥" : "♡"}
+                  {likedIds.includes(String(book.id)) ? "♥" : "♡"} {book.likes || 0}
                 </p>
 
                 <Link to={`/books/${book.id}`}>

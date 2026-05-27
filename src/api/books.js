@@ -90,3 +90,18 @@ export async function updateBook(id, updatedFields) {
     throw err;
   }
 }
+
+// 7. 좋아요 기능
+export async function likeBook(id, likes){
+  try {
+    const res = await fetch(`${BASE_URL}/${id}`, {
+      method: "PATCH",
+      headers: {"Content-Type": "application/json" },
+      body: JSON.stringify({likes}),
+    });
+    if (!res.ok) throw new Error("좋아요 실패");
+    return await res.json();
+  } catch (err) {
+    console.error("likeBook 에러:", err);
+  }
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBook, deleteBook} from "../api/books";
+import { getBook, deleteBook, likeBook } from "../api/books";
 
 const styles = {
   container: {
@@ -107,6 +107,7 @@ function BookDetailPage() {
     }
     loadBook();
 
+  // 로컬 스토리지에서 좋아요 여부 확인
   const liked = localStorage.getItem(`likes_${id}`);
     if (liked) setIsLiked(true);
   }, [id]);
@@ -123,13 +124,23 @@ function BookDetailPage() {
     }
   };
 
-  const handleLike = () => {
-    if (isLiked) {
-      localStorage.removeItem(`likes_${id}`);
-      setIsLiked(false);
-    } else {
-      localStorage.setItem(`likes_${id}`, "true");
-      setIsLiked(true);
+  const handleLike = async () => {
+    try {
+      if (isLiked) {
+        const newLikes = Math.max((book.likes || 1) -1, 0);
+        const updated = await likeBook(id, newLikes);
+        setBook(updated);
+        localStorage.removeItem(`likes_${id}`);
+        setIsLiked(false);
+      } else {
+        const newLikes = (book.likes || 0) + 1;
+        const updated = await likeBook(id, newLikes);
+        setBook(updated);
+        localStorage.setItem(`likes_${id}`, "true");
+        setIsLiked(true);
+      }
+    } catch (err) {
+      console.error("좋아요 에러: ", err);
     }
   };
 
@@ -189,7 +200,7 @@ function BookDetailPage() {
                 gap: "6px",
               }}
             >
-              {isLiked ? "♥" : "♡"} 좋아요
+              {isLiked ? "♥" : "♡"} 좋아요 {book.likes || 0}
             </button>
           </div>
         </div>
