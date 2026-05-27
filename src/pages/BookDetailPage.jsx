@@ -185,9 +185,27 @@ function BookDetailPage() {
               {book.title}
             </Typography>
 
-            <Typography variant="body1" sx={{ color: "text.secondary", fontWeight: 500 }}>
-              저자: {book.author}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "flex-start", sm: "center" },
+                gap: 1,
+              }}
+            >
+              <Typography variant="body1" sx={{ color: "text.secondary", fontWeight: 500 }}>
+                저자: {book.author}
+              </Typography>
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
+                  등록일 {new Date(book.createdAt).toLocaleDateString()}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
+                  수정일 {new Date(book.updatedAt).toLocaleDateString()}
+                </Typography>
+              </Box>
+            </Box>
 
             <Divider sx={{ my: 0.5, borderColor: "#ead7b1" }} />
 
@@ -247,44 +265,35 @@ function BookDetailPage() {
 
             <Divider sx={{ my: 1.5, borderColor: "#ead7b1" }} />
 
-            {/* 날짜 및 액션 버튼 */}
+            {/* 액션 버튼 영역 */}
             <Box
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
                 justifyContent: "space-between",
-                alignItems: { xs: "flex-start", sm: "center" },
-                gap: 2,
+                alignItems: "center",
+                width: "100%",
                 mt: 1.5,
               }}
             >
-              {/* 날짜 영역: flexDirection column으로 줄바꿈 확실히 강제하고 찌그러짐 방지 */}
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, flexShrink: 0 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
-                  등록일 {new Date(book.createdAt).toLocaleDateString()}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: "block", whiteSpace: "nowrap" }}>
-                  수정일 {new Date(book.updatedAt).toLocaleDateString()}
-                </Typography>
-              </Box>
+              {/* 목록으로 버튼 (좌측 정렬) */}
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => navigate("/")}
+                startIcon={<ArrowBackIcon sx={{ marginRight: "6px" }} />}
+                sx={{
+                  borderColor: "#ead7b1",
+                  color: "#6b4f3a",
+                  py: 0.8,
+                  px: 1.5,
+                  "&:hover": { borderColor: "#c98d1a" },
+                }}
+              >
+                목록으로
+              </Button>
 
-              {/* 버튼 영역: size="small" 적용하여 4개 버튼이 한 줄에 쏙 들어가도록 조율 */}
-              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: "flex-end" }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => navigate("/")}
-                  startIcon={<ArrowBackIcon />}
-                  sx={{
-                    borderColor: "#ead7b1",
-                    color: "#6b4f3a",
-                    py: 0.8,
-                    px: 1.5,
-                    "&:hover": { borderColor: "#c98d1a" },
-                  }}
-                >
-                  목록으로
-                </Button>
+              {/* 액션 버튼들 (우측 정렬) */}
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                 <Button
                   variant="contained"
                   color="primary"
