@@ -9,6 +9,14 @@ function BookListPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
 
+  const getLikedIds = () => {
+    return Object.keys(localStorage)
+      .filter((key) => key.startsWith("likes_"))
+      .map((key) => key.replace("likes_", ""));
+  };
+
+  const [likedIds, setLikedIds] = useState(getLikedIds);
+
   useEffect(() => {
     async function loadBooks() {
       try {
@@ -23,6 +31,12 @@ function BookListPage() {
     loadBooks();
   }, []);
 
+  useEffect(() => {
+  const handleFocus = () => setLikedIds(getLikedIds());
+  window.addEventListener("focus", handleFocus);
+  return () => window.removeEventListener("focus", handleFocus);
+}, []);
+
   // 검색 필터
   const filterdBooks = books.filter(
     (book) =>
@@ -30,8 +44,13 @@ function BookListPage() {
       book.author.includes(searchKeyword)
   );
 
+  // 좋아요 필터
+  const likedFilteredBooks = sortOrder === "liked"
+  ? filterdBooks.filter((book) => likedIds.includes(String(book.id)))
+  : filterdBooks;
+
   // 정렬
-  const sortedBooks = [...filterdBooks].sort((a, b) => {
+  const sortedBooks = [...likedFilteredBooks].sort((a, b) => {
     if (sortOrder === "newest")
       return new Date(b.createdAt) - new Date(a.createdAt);
     if (sortOrder === "oldest")
@@ -102,8 +121,10 @@ function BookListPage() {
           <option value="oldest">오래된순</option>
           <option value="title">제목순</option>
           <option value="author">작가명순</option>
+          <option value="liked">좋아요한 책</option>
         </select>
       </div>
+
 
       {/* 도서 목록 */}
       {sortedBooks.length === 0 ? (
@@ -111,7 +132,11 @@ function BookListPage() {
           textAlign: "center", 
           color: "#999", 
           marginTop: "40px" }}>
-          {searchKeyword ? "검색 결과가 없습니다." : "등록된 도서가 없습니다."}
+          {sortOrder === "liked"
+            ? "좋아요한 도서가 없습니다."
+            : searchKeyword
+            ? "검색 결과가 없습니다."
+            : "등록된 도서가 없습니다."}
         </p>
       ) : (
         <div
@@ -165,6 +190,10 @@ function BookListPage() {
                 <p>저자: {book.author}</p>
                 
                 <p>{book.summary}</p>
+
+                <p style={{ fontSize: "13px", color: "#e55", margin: "6px 0" }}>
+                  {likedIds.includes(String(book.id)) ? "♥" : "♡"}
+                </p>
 
                 <Link to={`/books/${book.id}`}>
                   <button

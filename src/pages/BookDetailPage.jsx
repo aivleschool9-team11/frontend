@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBook, deleteBook } from "../api/books";
+import { getBook, deleteBook} from "../api/books";
 
 const styles = {
   container: {
@@ -91,6 +91,7 @@ function BookDetailPage() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     async function loadBook() {
@@ -105,6 +106,9 @@ function BookDetailPage() {
       }
     }
     loadBook();
+
+  const liked = localStorage.getItem(`likes_${id}`);
+    if (liked) setIsLiked(true);
   }, [id]);
 
   const handleDelete = async () => {
@@ -116,6 +120,16 @@ function BookDetailPage() {
       } else {
         alert("도서 삭제에 실패했습니다.");
       }
+    }
+  };
+
+  const handleLike = () => {
+    if (isLiked) {
+      localStorage.removeItem(`likes_${id}`);
+      setIsLiked(false);
+    } else {
+      localStorage.setItem(`likes_${id}`, "true");
+      setIsLiked(true);
     }
   };
 
@@ -158,6 +172,24 @@ function BookDetailPage() {
             </button>
             <button style={styles.deleteBtn} onClick={handleDelete}>
               삭제
+            </button>
+
+            <button
+              onClick={handleLike}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ffb3b3",
+                borderRadius: "6px",
+                background: "#fff",
+                fontSize: "16px",
+                color: "#e55",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              {isLiked ? "♥" : "♡"} 좋아요
             </button>
           </div>
         </div>
