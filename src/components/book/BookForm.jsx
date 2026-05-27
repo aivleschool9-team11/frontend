@@ -3,7 +3,7 @@ import { formStyles } from "./FormStyles";
 /**
  * BookCreatePage / BookEditPage 공통 입력 필드
  * Props:
- *   form     — { title, author, summary, content }
+ *   form     — { title, author, content }
  *   errors   — useFormValidation의 errors (없으면 빈 객체)
  *   onChange — handleChange 함수
  */
@@ -43,23 +43,6 @@ function BookForm({ form, errors = {}, onChange }) {
           }}
         />
         {errors.author && <p style={formStyles.errorMsg}>{errors.author}</p>}
-      </div>
-
-      <div style={formStyles.fieldWrap}>
-        <label>
-          한줄 요약 <span style={{ color: "#e55" }}>*</span>
-        </label>
-        <input
-          name='summary'
-          value={form.summary}
-          onChange={onChange}
-          placeholder='한줄 요약을 입력하세요'
-          style={{
-            ...formStyles.input,
-            borderColor: errors.summary ? "#e55" : "#ddd",
-          }}
-        />
-        {errors.summary && <p style={formStyles.errorMsg}>{errors.summary}</p>}
       </div>
 
       <div style={formStyles.fieldWrap}>

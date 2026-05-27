@@ -36,8 +36,8 @@ function BookEditPage() {
         setBook({
           title: data.title || "",
           author: data.author || "",
-          summary: data.summary || "",
           content: data.content || "",
+          summary: data.summary || "",
           copy: data.copy || "",
           tags: data.tags || [],
           coverImageUrl: data.coverImageUrl || "",
@@ -103,7 +103,6 @@ function BookEditPage() {
       if (!updatedBook) {
         throw new Error("수정 실패");
       }
-      console.log("수정 완료:", updatedBook);
       alert("도서 수정 완료");
     } catch (err) {
       console.error(err);
@@ -142,7 +141,12 @@ function BookEditPage() {
     try {
       setCopyLoading(true);
       const result = await fetchAiCopyAndTags(book.title, book.content);
-      setBook({ ...book, copy: result.copy, tags: result.tags });
+      setBook({
+        ...book,
+        summary: result.summary,
+        copy: result.copy,
+        tags: result.tags,
+      });
     } catch (err) {
       alert("생성에 실패했습니다.");
       console.error(err);
@@ -161,8 +165,8 @@ function BookEditPage() {
   const isFormValid =
     book.title.trim() &&
     book.author.trim() &&
-    book.summary.trim() &&
     book.content.trim() &&
+    book.summary.trim() &&
     !aiLoading &&
     !copyLoading;
 
@@ -174,6 +178,7 @@ function BookEditPage() {
         <BookForm form={book} onChange={handleChange} />
         <hr style={{ border: "none", borderTop: "1px solid #eee" }} />
         <AICopyTagSection
+          summary={book.summary}
           copy={book.copy}
           tags={book.tags}
           copyLoading={copyLoading}

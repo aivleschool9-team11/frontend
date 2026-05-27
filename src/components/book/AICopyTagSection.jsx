@@ -3,7 +3,8 @@ import { formStyles } from "./FormStyles";
 /**
  * 한줄 카피 + 태그 입력 섹션 (AI 생성 버튼 포함)
  * Props:
- *   copy        — 현재 카피 값
+ *   summary     — 한줄 요약
+ *   copy        — 한줄 카피
  *   tags        — string[]
  *   copyLoading — AI 생성 중 여부
  *   errors      — 유효성 에러 (없으면 빈 객체)
@@ -13,6 +14,7 @@ import { formStyles } from "./FormStyles";
  *   onRemove    — (index: number) => void
  */
 function AICopyTagSection({
+  summary,
   copy,
   tags,
   copyLoading,
@@ -32,7 +34,9 @@ function AICopyTagSection({
             alignItems: "center",
           }}
         >
-          <label>한줄 카피</label>
+          <label>
+            한줄 요약 <span style={{ color: "#e55" }}>*</span>
+          </label>
           <button
             type='button'
             onClick={onAIRequest}
@@ -47,9 +51,24 @@ function AICopyTagSection({
               color: "#7c3aed",
             }}
           >
-            {copyLoading ? "---생성 중---" : "AI 생성"}
+            {copyLoading ? "생성 중..." : "AI 생성"}
           </button>
         </div>
+        <input
+          name='summary'
+          value={summary}
+          onChange={onChange}
+          placeholder='한줄 요약을 입력하거나 AI로 생성하세요'
+          style={{
+            ...formStyles.input,
+            borderColor: errors.summary ? "#e55" : "#ddd",
+          }}
+        />
+        {errors.summary && <p style={formStyles.errorMsg}>{errors.summary}</p>}
+      </div>
+
+      <div style={formStyles.fieldWrap}>
+        <label>한줄 카피</label>
         <input
           name='copy'
           value={copy}
