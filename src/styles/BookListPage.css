@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
+
+/* 전체 페이지 */
+.book-list-page {
+  min-height: 100vh;
+
+  padding: 60px 90px;
+
+  font-family: 'Gowun Batang', serif;
+
+  background-color: #fffdf8;
+
+  background-image:
+    radial-gradient(#f1e3c8 1px, transparent 1px);
+
+  background-size: 24px 24px;
+}
+
+/* 제목 */
+.book-list-page h1 {
+  text-align: center;
+
+  margin-bottom: 50px;
+
+  color: #b87912;
+
+  font-size: 64px;
+
+  letter-spacing: 4px;
+
+  text-shadow: 2px 2px 8px rgba(201,141,26,0.15);
+}
+
+/* 검색 + 정렬 영역 */
+.search-sort-container {
+  display: flex;
+
+  gap: 16px;
+
+  margin-bottom: 40px;
+}
+
+/* 검색창 */
+.search-sort-container input {
+  flex: 1;
+
+  padding: 14px 18px;
+
+  border: 2px solid #ead7b1;
+
+  border-radius: 16px;
+
+  font-size: 16px;
+
+  outline: none;
+
+  background-color: #fffdf8;
+
+  transition: 0.3s;
+}
+
+/* 검색창 focus */
+.search-sort-container input:focus {
+  border-color: #c98d1a;
+
+  box-shadow: 0 0 10px rgba(201, 141, 26, 0.2);
+}
+
+/* 정렬 select */
+.search-sort-container select {
+  padding: 14px 18px;
+
+  border: 2px solid #ead7b1;
+
+  border-radius: 16px;
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  background-color: white;
+
+  transition: 0.3s;
+}
+
+/* select hover */
+.search-sort-container select:hover {
+  border-color: #c98d1a;
+}
+
+/* 도서 목록 */
+.bookshelf {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 28px;
+}
+
+/* 책 카드 */
+.book-item {
+  display: flex;
+
+  gap: 28px;
+
+  border-radius: 28px;
+
+  padding: 28px;
+
+  background: linear-gradient(
+    to bottom right,
+    #fffaf3,
+    #fff7eb
+  );
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.05),
+    0 2px 8px rgba(201,141,26,0.12);
+
+  backdrop-filter: blur(6px);
+
+  transition: 0.3s;
+
+  animation: fadeUp 0.5s ease;
+}
+
+/* hover 효과 */
+.book-item:hover {
+  transform: translateY(-10px);
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.12),
+    0 4px 12px rgba(201,141,26,0.18);
+}
+
+/* 이미지 */
+.book-item img {
+  border-radius: 14px;
+}
+
+/* 이미지 hover */
+.book-item img:hover {
+  transform: scale(1.05);
+
+  transition: 0.3s;
+}
+
+/* 제목 */
+.book-item h2 {
+  color: #b87912;
+
+  font-size: 38px;
+
+  margin-bottom: 14px;
+
+  transition: 0.3s;
+}
+
+/* 제목 hover */
+.book-item h2:hover {
+  color: #d49a25;
+}
+
+/* 본문 */
+.book-item p {
+  line-height: 1.7;
+
+  color: #555;
+}
+
+/* 좋아요 */
+.book-item p:last-of-type {
+  color: #e06767;
+
+  font-weight: bold;
+}
+
+/* 버튼 */
+.book-item button {
+  margin-top: 16px;
+
+  padding: 12px 24px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background-color: #c98d1a;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  letter-spacing: 1px;
+
+  transition: 0.3s;
+}
+
+/* 버튼 hover */
+.book-item button:hover {
+  background-color: #a87412;
+
+  transform: scale(1.05);
+}
+
+/* 데이터 없을 때 */
+.empty-text {
+  text-align: center;
+
+  color: #999;
+
+  margin-top: 40px;
+
+  font-size: 18px;
+}
+
+/* 카드 등장 애니메이션 */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
