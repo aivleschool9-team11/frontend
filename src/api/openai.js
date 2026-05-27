@@ -2,7 +2,44 @@ import { getCoverDesignerPrompt, MARKETER_SYSTEM_PROMPT } from "./prompts";
 
 const OPENAI_IMAGE_API_URL = 'https://api.openai.com/v1/images/generations';
 const OPENAI_TEXT_API_URL = 'https://api.openai.com/v1/chat/completions';
+const OPENAI_EMBEDDING_API_URL = 'https://api.openai.com/v1/embeddings';
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+
+/**
+ * OpenAI API를 호출하여 입력 텍스트의 1536차원 벡터 임베딩을 가져오는 함수
+ * @param {string} text - 임베딩할 대상 텍스트
+ * @returns {Promise<number[]>} 1536차원 임베딩 벡터 배열
+ */
+export const fetchAiEmbedding = async (text) => {
+  if (!text || !text.trim()) return [];
+
+  if (!apiKey) {
+    console.error('.env 파일에 VITE_OPENAI_API_KEY가 설정되지 않았습니다.');
+    throw new Error('API Key가 누락되었습니다.');
+  }
+
+  try {
+    const res = await fetch(OPENAI_EMBEDDING_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'text-embedding-3-small',
+        input: text.trim(),
+      }),
+    });
+
+    if (!res.ok) throw new Error(`OpenAI Embedding 요청 실패: ${res.status}`);
+
+    const data = await res.json();
+    return data.data?.[0]?.embedding || [];
+  } catch (err) {
+    console.error("AI 임베딩 생성 에러: ", err.message);
+    throw err;
+  }
+};
 
 /**
  * OpenAI API를 호출하여 도서 표지 이미지를 생성하는 함수
@@ -113,4 +150,17 @@ export const fetchAiCopyAndTags = async (title, content) => {
     console.error("AI 마케터 생성 에러", err.message);
     throw err;
   }
+};
+
+/**
+ * 두 1536차원 벡터 간의 코사인 유사도(dot product)를 계산하는 함수
+ * (OpenAI 임베딩은 이미 정규화되어 있으므로 단순 내적으로 계산 가능)
+ * @param {number[]} vecA
+ * @param {number[]} vecB
+ * @returns {number} 유사도 점수 (-1 ~ 1)
+ */
+export const cosineSimilarity = (vecA, vecB) => {
+  if (!vecA || !vecB || vecA.length === 0 || vecB.length === 0) return 0;
+  if (vecA.length !== vecB.length) return 0;
+  return vecA.reduce((sum, val, i) => sum + val * vecB[i], 0);
 };

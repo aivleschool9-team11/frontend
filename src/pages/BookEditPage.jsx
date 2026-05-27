@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBook, updateBook } from "../api/books";
-import { fetchAiCover, fetchAiCopyAndTags } from "../api/openai";
+import { fetchAiCover, fetchAiCopyAndTags, fetchAiEmbedding } from "../api/openai";
 import BookForm from "../components/book/BookForm";
 import AICopyTagSection from "../components/book/AICopyTagSection";
 import AICoverSection from "../components/book/AICoverSection";
@@ -103,6 +103,21 @@ function BookEditPage() {
     if (Object.keys(updatedFields).length === 0) {
       alert("변경된 내용이 없습니다.");
       return;
+    }
+
+    const didTextChange =
+      updatedFields.title !== undefined ||
+      updatedFields.author !== undefined ||
+      updatedFields.summary !== undefined ||
+      updatedFields.content !== undefined;
+
+    if (didTextChange) {
+      try {
+        const textToEmbed = `제목: ${book.title}\n저자: ${book.author}\n요약: ${book.summary}\n내용: ${book.content}`;
+        updatedFields.embedding = await fetchAiEmbedding(textToEmbed);
+      } catch (embErr) {
+        console.error("임베딩 수정 실패:", embErr);
+      }
     }
 
     updatedFields.updatedAt = new Date().toISOString();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getBooks } from "../api/books";
+import { getBooks, updateBook } from "../api/books";
 import {
   Box,
   Typography,
@@ -10,10 +10,15 @@ import {
   Paper,
   Button,
   InputAdornment,
+  IconButton,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import SparklesIcon from "@mui/icons-material/AutoAwesome";
+import { fetchAiEmbedding, cosineSimilarity } from "../api/openai";
 
 const fadeUp = {
   "@keyframes fadeUp": {
@@ -28,6 +33,13 @@ function BookListPage() {
   const [error, setError] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
+
+  // AI 시맨틱 검색 관련 상태
+  const [isAiSearch, setIsAiSearch] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [similarityScores, setSimilarityScores] = useState({});
+  const [lastSubmittedQuery, setLastSubmittedQuery] = useState("");
+  const [backfilling, setBackfilling] = useState(false);
 
   const getLikedIds = () => {
     return Object.keys(localStorage)
@@ -57,17 +69,81 @@ function BookListPage() {
     return () => window.removeEventListener("focus", handleFocus);
   }, []);
 
+  // AI 검색어 입력 후 제출 핸들러
+  const handleAiSearch = async () => {
+    if (!searchKeyword.trim()) {
+      setSimilarityScores({});
+      setLastSubmittedQuery("");
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const queryEmbedding = await fetchAiEmbedding(searchKeyword);
+      const scores = {};
+      books.forEach((book) => {
+        if (book.embedding && book.embedding.length > 0) {
+          scores[book.id] = cosineSimilarity(queryEmbedding, book.embedding);
+        } else {
+          scores[book.id] = 0;
+        }
+      });
+      setSimilarityScores(scores);
+      setLastSubmittedQuery(searchKeyword);
+    } catch (err) {
+      console.error(err);
+      alert("AI 검색 중 오류가 발생했습니다.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  // 기존 도서들 중 임베딩 데이터가 없는 건에 대한 일괄 생성(백필) 핸들러
+  const handleBackfill = async () => {
+    setBackfilling(true);
+    try {
+      let count = 0;
+      for (const book of books) {
+        if (!book.embedding || book.embedding.length === 0) {
+          const textToEmbed = `제목: ${book.title}\n저자: ${book.author}\n요약: ${book.summary}\n내용: ${book.content}`;
+          const embedding = await fetchAiEmbedding(textToEmbed);
+          await updateBook(book.id, { embedding });
+          count++;
+        }
+      }
+      alert(`${count}개 도서의 AI 임베딩이 성공적으로 생성되었습니다!`);
+      const booksData = await getBooks();
+      setBooks(booksData);
+    } catch (err) {
+      console.error(err);
+      alert("임베딩 백필 중 오류가 발생했습니다.");
+    } finally {
+      setBackfilling(false);
+    }
+  };
+
+  // 일반 키워드 검색 필터링
   const filterdBooks = books.filter(
     (book) =>
       book.title.includes(searchKeyword) || book.author.includes(searchKeyword),
   );
 
+  const isAiSearchActive = isAiSearch && lastSubmittedQuery.trim() !== "";
+
+  // 검색 결과에 따른 노출 대상 목록 설정
   const likedFilteredBooks =
     sortOrder === "liked"
-      ? filterdBooks.filter((book) => likedIds.includes(String(book.id)))
-      : filterdBooks;
+      ? (isAiSearchActive ? books.filter((book) => likedIds.includes(String(book.id))) : filterdBooks.filter((book) => likedIds.includes(String(book.id))))
+      : (isAiSearchActive ? books : filterdBooks);
 
+  // 정렬 순서 계산 (AI 검색 활성화 시 유사도 순 정렬 우선)
   const sortedBooks = [...likedFilteredBooks].sort((a, b) => {
+    if (isAiSearchActive) {
+      const scoreA = similarityScores[a.id] || 0;
+      const scoreB = similarityScores[b.id] || 0;
+      if (scoreA !== scoreB) return scoreB - scoreA;
+    }
+
     if (sortOrder === "newest")
       return new Date(b.createdAt) - new Date(a.createdAt);
     if (sortOrder === "oldest")
@@ -76,6 +152,9 @@ function BookListPage() {
     if (sortOrder === "author") return a.author.localeCompare(b.author);
     return 0;
   });
+
+  const hasBooksWithoutEmbedding =
+    books.length > 0 && books.some((book) => !book.embedding || book.embedding.length === 0);
 
   if (loading) {
     return (
@@ -124,10 +203,40 @@ function BookListPage() {
         도서 목록
       </Typography>
 
+      {/* 백필 안내 배너 */}
+      {hasBooksWithoutEmbedding && (
+        <Alert
+          severity='warning'
+          action={
+            <Button
+              color='inherit'
+              size='small'
+              onClick={handleBackfill}
+              disabled={backfilling}
+              sx={{ fontWeight: "bold", fontFamily: "inherit" }}
+            >
+              {backfilling ? "백필 중..." : "일괄 생성"}
+            </Button>
+          }
+          sx={{
+            maxWidth: "800px",
+            mx: "auto",
+            mb: 3,
+            borderRadius: "12px",
+            fontFamily: "inherit",
+          }}
+        >
+          {backfilling
+            ? "일부 도서의 AI 임베딩 벡터를 추출하여 데이터베이스를 업데이트하는 중입니다..."
+            : "일부 도서에 AI 임베딩 데이터가 없습니다. 원활한 의미 검색을 위해 아래 일괄 생성 버튼을 클릭하세요."}
+        </Alert>
+      )}
+
       {/* 검색 + 정렬 */}
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           gap: 1.5,
           mb: 4.5,
           maxWidth: "800px",
@@ -137,7 +246,16 @@ function BookListPage() {
         <TextField
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          placeholder='제목 또는 저자 검색'
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && isAiSearch) {
+              handleAiSearch();
+            }
+          }}
+          placeholder={
+            isAiSearch
+              ? "책 내용이나 특징으로 검색 (예: 노인이 고래와 싸움) + Enter"
+              : "제목 또는 저자 검색"
+          }
           size='small'
           fullWidth
           slotProps={{
@@ -149,9 +267,46 @@ function BookListPage() {
                   />
                 </InputAdornment>
               ),
+              endAdornment: isAiSearch && (
+                <InputAdornment position='end'>
+                  {aiLoading ? (
+                    <CircularProgress size={18} color='inherit' />
+                  ) : (
+                    <IconButton onClick={handleAiSearch} size='small'>
+                      <SearchIcon sx={{ color: "#8A6A44" }} />
+                    </IconButton>
+                  )}
+                </InputAdornment>
+              ),
             },
           }}
         />
+        <Button
+          variant={isAiSearch ? "contained" : "outlined"}
+          onClick={() => {
+            setIsAiSearch(!isAiSearch);
+            if (isAiSearch) {
+              setSimilarityScores({});
+              setLastSubmittedQuery("");
+            }
+          }}
+          startIcon={<SparklesIcon />}
+          sx={{
+            minWidth: "140px",
+            borderColor: "#ead7b1",
+            backgroundColor: isAiSearch ? "#8A6A44" : "#F8F3EA",
+            color: isAiSearch ? "#fff" : "#8A6A44",
+            py: 1,
+            px: 2,
+            fontFamily: "inherit",
+            "&:hover": {
+              borderColor: "#8A6A44",
+              backgroundColor: isAiSearch ? "#705332" : "#eee7db",
+            },
+          }}
+        >
+          AI 의미 검색
+        </Button>
         <Select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
@@ -260,6 +415,24 @@ function BookListPage() {
                 }}
               >
                 <Box>
+                  {isAiSearchActive && similarityScores[book.id] !== undefined && (
+                    <Box
+                      sx={{
+                        display: "inline-block",
+                        backgroundColor: "#F8F3EA",
+                        color: "#8A6A44",
+                        border: "1px solid #ead7b1",
+                        borderRadius: "999px",
+                        fontSize: "11px",
+                        fontWeight: "bold",
+                        py: 0.25,
+                        px: 1,
+                        mb: 1,
+                      }}
+                    >
+                      AI 유사도: {(similarityScores[book.id] * 100).toFixed(1)}%
+                    </Box>
+                  )}
                   <Typography
                     component='h2'
                     sx={{
