@@ -60,13 +60,13 @@ export const fetchAiCover = async (title, author, content) => {
 };
 
 /**
- * AI 마케터: 책 제목과 줄거리를 바탕으로 한 줄 카피와 태그를 생성.
+ * AI 마케터: 책 제목과 줄거리를 바탕으로 한 줄 요약, 홍보 카피, 태그를 생성.
  * @param {string} title - 도서 제목
  * @param {string} content - 도서 내용
- * @returns {object} { copy: "한 줄 카피", tags: ["#태그1", "#태그2", "#태그3"] }
+ * @returns {object} { summary: "객관적 요약", copy: "홍보용 카피", tags: ["#태그1", "#태그2"] }
  */
 export const fetchAiCopyAndTags = async (title, content) => {
-  console.log(`\n[AI 마케터] '${title}' 도서의 카피 및 태그 생성 요청 중... (약 2~5초 소요)`);
+  console.log(`\n[AI 마케터] '${title}' 도서의 요약, 카피 및 태그 생성 요청 중... (약 2~5초 소요)`);
   
   if(!apiKey){
     console.error('.env 파일에 VITE_OPENAI_API_KEY가 설정되지 않았습니다.');
