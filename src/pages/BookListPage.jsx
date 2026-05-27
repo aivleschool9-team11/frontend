@@ -551,7 +551,7 @@ function BookListPage() {
                       />
                     )}
                     <Typography variant='caption' sx={{ color: "error.main" }}>
-                      좋아요
+                      좋아요 {book.likes || 0}
                     </Typography>
                   </Box>
                   <Link
