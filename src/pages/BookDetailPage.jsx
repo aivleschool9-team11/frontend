@@ -1,89 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBook, deleteBook} from "../api/books";
-
-const styles = {
-  container: {
-    maxWidth: "780px",
-    margin: "40px auto",
-    padding: "40px 48px",
-    border: "1px solid #e0e0e0",
-    borderRadius: "8px",
-    backgroundColor: "#fff",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  },
-  layout: {
-    display: "flex",
-    gap: "32px",
-    alignItems: "flex-start",
-  },
-  cover: {
-    width: "180px",
-    height: "250px",
-    objectFit: "cover",
-    borderRadius: "6px",
-    flexShrink: 0,
-  },
-  noCover: {
-    width: "180px",
-    height: "250px",
-    background: "#f5f5f5",
-    borderRadius: "6px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#bbb",
-    fontSize: "13px",
-    flexShrink: 0,
-  },
-  info: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  author: {
-    fontSize: "14px",
-    color: "#666",
-  },
-  summary: {
-    fontSize: "14px",
-    color: "#888",
-    fontStyle: "italic",
-  },
-  content: {
-    fontSize: "14px",
-    lineHeight: "1.8",
-    color: "#333",
-  },
-  date: {
-    fontSize: "12px",
-    color: "#e55",
-  },
-  btnRow: {
-    display: "flex",
-    gap: "8px",
-    marginTop: "8px",
-  },
-  btn: {
-    padding: "8px 20px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    background: "#fff",
-    fontSize: "13px",
-    color: "#444",
-    cursor: "pointer",
-  },
-  deleteBtn: {
-    padding: "8px 20px",
-    border: "1px solid #f09595",
-    borderRadius: "6px",
-    background: "#fff",
-    fontSize: "13px",
-    color: "#e55",
-    cursor: "pointer",
-  },
-};
+import { getBook, deleteBook } from "../api/books";
+import "../styles/BookDetailPage.css";
 
 function BookDetailPage() {
   const { id } = useParams();
@@ -107,7 +25,7 @@ function BookDetailPage() {
     }
     loadBook();
 
-  const liked = localStorage.getItem(`likes_${id}`);
+    const liked = localStorage.getItem(`likes_${id}`);
     if (liked) setIsLiked(true);
   }, [id]);
 
@@ -133,6 +51,13 @@ function BookDetailPage() {
     }
   };
 
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = book.coverImageUrl;
+    link.download = `${book.title}_표지.png`;
+    link.click();
+  };
+
   if (loading)
     return (
       <p style={{ textAlign: "center", marginTop: "40px" }}>불러오는 중...</p>
@@ -141,57 +66,68 @@ function BookDetailPage() {
     return <p style={{ textAlign: "center", color: "#e55" }}>{error}</p>;
 
   return (
-    <div style={styles.container}>
-      <div style={styles.layout}>
-        {book.coverImageUrl ? (
-          <img src={book.coverImageUrl} alt={book.title} style={styles.cover} />
-        ) : (
-          <div style={styles.noCover}>no image</div>
-        )}
+    <div className='detail-container'>
+      <div className='detail-layout'>
+        <div className='detail-cover-wrap'>
+          {book.coverImageUrl ? (
+            <>
+              <img
+                src={book.coverImageUrl}
+                alt={book.title}
+                className='detail-cover'
+              />
+              <button className='detail-download-btn' onClick={handleDownload}>
+                표지 다운로드
+              </button>
+            </>
+          ) : (
+            <div className='detail-no-cover'>no image</div>
+          )}
+        </div>
 
-        <div style={styles.info}>
+        <div className='detail-info'>
           <h1>{book.title}</h1>
-          <p style={styles.author}>{book.author}</p>
-          <p style={styles.summary}>{book.summary}</p>
-          <p style={styles.content}>{book.content}</p>
-          <p style={styles.date}>
+          <p className='detail-author'>{book.author}</p>
+          {book.summary && <p className='detail-summary'>{book.summary}</p>}
+          {book.copy && <p className='detail-copy'>{book.copy}</p>}
+          <p className='detail-content'>{book.content}</p>
+          <p className='detail-date'>
             등록일 {new Date(book.createdAt).toLocaleDateString()}
           </p>
-          <p style={styles.date}>
+          <p className='detail-date'>
             수정일 {new Date(book.updatedAt).toLocaleDateString()}
           </p>
-          <div style={styles.btnRow}>
-            <button style={styles.btn} onClick={() => navigate("/")}>
+          <div className='detail-btn-row'>
+            <button className='detail-btn' onClick={() => navigate("/")}>
               목록으로
             </button>
             <button
-              style={styles.btn}
+              className='detail-btn'
               onClick={() => navigate(`/books/${id}/edit`)}
             >
               수정
             </button>
-            <button style={styles.deleteBtn} onClick={handleDelete}>
+            <button className='detail-delete-btn' onClick={handleDelete}>
               삭제
             </button>
-
             <button
+              className='detail-like-btn'
               onClick={handleLike}
-              style={{
-                padding: "8px 16px",
-                border: "1px solid #ffb3b3",
-                borderRadius: "6px",
-                background: "#fff",
-                fontSize: "16px",
-                color: "#e55",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
+              style={{ color: isLiked ? "#e55" : "#aaa" }}
             >
               {isLiked ? "♥" : "♡"} 좋아요
             </button>
           </div>
+
+          {book.tags && book.tags.length > 0 && (
+            <div className='detail-tag-wrap'>
+              {book.tags.map((tag, i) => (
+                <span key={i} className='detail-tag'>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
