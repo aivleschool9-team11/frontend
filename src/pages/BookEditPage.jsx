@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBooksById, updateBook } from "../api/books";
+import { getBookById, updateBook } from "../api/books";
 import {
   fetchAiCover,
   fetchAiCopyAndTags,
@@ -45,7 +45,7 @@ function BookEditPage() {
   useEffect(() => {
     const fetchBookData = async () => {
       try {
-        const data = await getBook(id);
+        const data = await getBookById(id);
         setBook({
           title: data.title || "",
           author: data.author || "",
@@ -119,7 +119,7 @@ function BookEditPage() {
       try {
         const textToEmbed = `제목: ${book.title}\n저자: ${book.author}\n요약: ${book.summary}\n내용: ${book.content}`;
         const startTime = performance.now();
-        updatedFields.embedding = await fetchAiEmbedding(textToEmbed);
+        updatedFields.embeddingJson = await fetchAiEmbedding(textToEmbed);
         updatedFields.embeddingDurationMs = Math.round(performance.now() - startTime);
       } catch (embErr) {
         console.error("임베딩 수정 실패:", embErr);
