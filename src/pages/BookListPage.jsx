@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getBooks, updateBook, semanticSearchBooks, createSearchLog, createSearchResultClick} from "../api/books";
+import { getBooks, semanticSearchBooks, createSearchLog, createSearchResultClick} from "../api/books";
 import {
   Box,
   Typography,
@@ -12,7 +12,6 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
-  Alert,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -43,7 +42,6 @@ function BookListPage() {
   const [aiLoading, setAiLoading] = useState(false); // AI 검색 처리 중 여부
   const [similarityScores, setSimilarityScores] = useState({}); // { bookId: 유사도점수 } 형태로 저장
   const [lastSubmittedQuery, setLastSubmittedQuery] = useState(""); // 마지막으로 AI 검색한 검색어
-  const [backfilling, setBackfilling] = useState(false);
   const [aiInferredInfo, setAiInferredInfo] = useState(null); // AI가 추론한 도서 정보 (제목, 저자)
 
   const getLikedIds = () => {
@@ -176,34 +174,6 @@ function BookListPage() {
     }
   };
 
-  // 기존 도서들 중 임베딩 데이터가 없는 건에 대한 일괄 생성(백필) 핸들러
-  const handleBackfill = async () => {
-    setBackfilling(true);
-    try {
-      let count = 0;
-      for (const book of books) {
-        if (!book.embedding || book.embedding.length === 0) {
-          const textToEmbed = `제목: ${book.title}\n저자: ${book.author}\n요약: ${book.summary}\n내용: ${book.content}`;
-          const embedding = await fetchAiEmbedding(textToEmbed);
-
-          const startTime = performance.now();
-          const embeddingJson = await fetchAiEmbedding(textToEmbed);
-          const embeddingDurationMs = Math.round(performance.now() - startTime);
-          await updateBook(book.id, { embeddingJson, embeddingDurationMs });
-          count++;
-        }
-      }
-      alert(`${count}개 도서의 AI 임베딩이 성공적으로 생성되었습니다!`);
-      const booksData = await getBooks();
-      setBooks(booksData);
-    } catch (err) {
-      console.error(err);
-      alert("임베딩 백필 중 오류가 발생했습니다.");
-    } finally {
-      setBackfilling(false);
-    }
-  };
-
   // ── 유사도 점수를 화면용 퍼센트로 변환 ───────────
   // 0.12 이하는 0~30%, 0.12~0.5 구간은 30~100%로 보정
   const displaySimilarity = (score) => {
@@ -246,10 +216,6 @@ function BookListPage() {
     if (sortOrder === "likes") return (b.likes || 0) - (a.likes || 0);
     return 0;
   });
-
-  const hasBooksWithoutEmbedding =
-    books.length > 0 &&
-    books.some((book) => !book.embedding || book.embedding.length === 0);
 
   if (loading) {
     return (
@@ -297,35 +263,6 @@ function BookListPage() {
       >
         도서 목록
       </Typography>
-
-      {/* 백필 안내 배너 */}
-      {hasBooksWithoutEmbedding && (
-        <Alert
-          severity='warning'
-          action={
-            <Button
-              color='inherit'
-              size='small'
-              onClick={handleBackfill}
-              disabled={backfilling}
-              sx={{ fontWeight: "bold", fontFamily: "inherit" }}
-            >
-              {backfilling ? "백필 중..." : "일괄 생성"}
-            </Button>
-          }
-          sx={{
-            maxWidth: "800px",
-            mx: "auto",
-            mb: 3,
-            borderRadius: "12px",
-            fontFamily: "inherit",
-          }}
-        >
-          {backfilling
-            ? "일부 도서의 AI 임베딩 벡터를 추출하여 데이터베이스를 업데이트하는 중입니다..."
-            : "일부 도서에 AI 임베딩 데이터가 없습니다. 원활한 의미 검색을 위해 아래 일괄 생성 버튼을 클릭하세요."}
-        </Alert>
-      )}
 
       {/* 검색 + 정렬 */}
       <Box
