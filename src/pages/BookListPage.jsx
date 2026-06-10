@@ -28,23 +28,19 @@ const fadeUp = {
 };
 
 function BookListPage() {
-  // ── 도서 목록 상태 ──────────────────────────────
-  const [books, setBooks] = useState([]);       // Spring에서 받아온 도서 목록
-  const [loading, setLoading] = useState(true); // 로딩 중 여부
-  const [error, setError] = useState(null);     // 에러 메시지
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest");
 
-  // ── 검색 / 정렬 상태 ────────────────────────────
-  const [searchKeyword, setSearchKeyword] = useState("");       // 입력창에 타이핑 중인 값 (실시간)
-  const [submittedKeyword, setSubmittedKeyword] = useState(""); // Enter 눌렀을 때 실제 검색 실행되는 값
-  const [sortOrder, setSortOrder] = useState("newest");         //  정렬 기준 (최신순 등)
-
-  // ── AI 의미 검색 상태 ────────────────────────────
-  const [isAiSearch, setIsAiSearch] = useState(false);  // AI 검색 모드 on/off
-  const [aiLoading, setAiLoading] = useState(false); // AI 검색 처리 중 여부
-  const [similarityScores, setSimilarityScores] = useState({}); // { bookId: 유사도점수 } 형태로 저장
-  const [lastSubmittedQuery, setLastSubmittedQuery] = useState(""); // 마지막으로 AI 검색한 검색어
+  // AI 시맨틱 검색 관련 상태
+  const [isAiSearch, setIsAiSearch] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [similarityScores, setSimilarityScores] = useState({});
+  const [lastSubmittedQuery, setLastSubmittedQuery] = useState("");
   const [backfilling, setBackfilling] = useState(false);
-  const [aiInferredInfo, setAiInferredInfo] = useState(null); // AI가 추론한 도서 정보 (제목, 저자)
+  const [aiInferredInfo, setAiInferredInfo] = useState(null); // LLM 지식 추론 정보
 
   const getLikedIds = () => {
     return Object.keys(localStorage)
@@ -54,27 +50,11 @@ function BookListPage() {
 
   const [likedIds, setLikedIds] = useState(getLikedIds);
 
-
-  // ── 도서 목록 불러오기 ───────────────────────────
-  // submittedKeyword(검색어) 또는 sortOrder(정렬) 바뀔 때마다 Spring API 호출
-  // 키워드 있을 때만 검색 로그 저장 (타이핑 중엔 호출 안 함, Enter 시에만)
   useEffect(() => {
     async function loadBooks() {
       try {
-        const startTime = performance.now();
-        const booksData = await getBooks({keyword: submittedKeyword, sort: sortOrder});
-        const durationMs = Math.round(performance.now() - startTime);
+        const booksData = await getBooks();
         setBooks(booksData);
-
-        // 검색 로그 기록 (초기 로드도 검색으로 간주)
-        if(submittedKeyword.trim()) {
-          await createSearchLog({
-            query: submittedKeyword,
-            searchType: "KEYWORD",
-            matchedBookCount: booksData.length,
-            durationMs,
-          });
-        }
       } catch (err) {
         console.error(err);
         setError("도서 목록을 불러오지 못했어요");
@@ -82,21 +62,15 @@ function BookListPage() {
       setLoading(false);
     }
     loadBooks();
-  }, [submittedKeyword, sortOrder]);
+  }, []);
 
-  // 다른 탭에서 돌아올 때 좋아요 상태 동기화
   useEffect(() => {
     const handleFocus = () => setLikedIds(getLikedIds());
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
   }, []);
 
-
-  // ── AI 의미 검색 핸들러 ──────────────────────────
-  // 1) 검색어를 LLM으로 확장 (관련 키워드 추론)
-  // 2) 확장된 검색어를 OpenAI로 벡터화
-  // 3) 벡터를 Spring으로 전송 → 코사인 유사도 계산 → 유사 도서 반환
-  // 4) 검색 로그 + 노출 결과 클릭 로그 저장
+  // AI 검색어 입력 후 제출 핸들러 (Query Expansion 적용)
   const handleAiSearch = async () => {
     if (!searchKeyword.trim()) {
       setSimilarityScores({});
@@ -107,18 +81,18 @@ function BookListPage() {
 
     setAiLoading(true);
     try {
-      // 현재 도서 목록을 컨텍스트로 변환 (LLM이 DB 안의 책만 추론하도록 제한)
+      // 1. 소장된 도서 목록을 텍스트 콘텍스트로 변환
       const bookListContext = books
         .map((b) => `'${b.title}' (${b.author})`)
         .join(", ");
 
-      // LLM으로 검색어 확장: 도서명 추론 + 연관 키워드 생성
+      // 2. LLM 지식을 활용하여 검색 쿼리 확장 (목록 내 도서와 우선 매칭)
       const expansion = await fetchExpandedQuery(
         searchKeyword,
         bookListContext,
       );
 
-      // AI가 추론한 도서 정보 있으면 배너에 표시
+      // 유추된 도서 정보 저장
       if (expansion.inferredTitle) {
         setAiInferredInfo({
           title: expansion.inferredTitle,
@@ -128,26 +102,24 @@ function BookListPage() {
         setAiInferredInfo(null);
       }
 
-      // 원본 검색어 + 추론 정보 합쳐서 임베딩 생성
+      // 원래 검색어와 LLM의 추론/확장 정보를 함께 결합한 텍스트로 임베딩 생성
       const expandedText =
         `${searchKeyword} ${expansion.inferredTitle} ${expansion.inferredAuthor} ${expansion.expandedKeywords}`.trim();
- 
+      // console.log("[RAG] 확장된 검색어:", expandedText);
       const queryEmbedding = await fetchAiEmbedding(expandedText);
-     
-      // Spring으로 벡터 전송 → 코사인 유사도 계산 → 유사 도서 반환
+      
       const startTime = performance.now();
       const results = await semanticSearchBooks({ queryVector: queryEmbedding, topK: 5 });
       const durationMs = Math.round(performance.now() - startTime);
 
-      // 검색 로그 저장 후 반환된 id로 노출 결과 클릭 로그 저장
       const log = await createSearchLog({
         query: searchKeyword,
         searchType: "SEMANTIC",
-        matchedBookCount: results.length,
+        mathchedBookCount: results.length,
         durationMs,
       });
 
-      // 노출된 결과 전체를 클릭 로그에 INSERT (clicked_at은 null → 클릭 시 UPDATE)
+      // 
       if (log?.id) {
         await Promise.all(results.map((book) =>
           createSearchResultClick({
@@ -159,15 +131,7 @@ function BookListPage() {
         ));
       }
 
-      // 유사도 점수를 { bookId: score } 형태로 저장 → 카드에 표시용
-      const scores = {};
-      results.forEach((book)=>{
-        scores[book.id] = book.similarityScore;
-      });
-      setSimilarityScores(scores);
-      setBooks(results);
-      setLastSubmittedQuery(searchKeyword);
-     
+      
     } catch (err) {
       console.error(err);
       alert("AI 검색 중 오류가 발생했습니다.");
@@ -204,8 +168,13 @@ function BookListPage() {
     }
   };
 
-  // ── 유사도 점수를 화면용 퍼센트로 변환 ───────────
-  // 0.12 이하는 0~30%, 0.12~0.5 구간은 30~100%로 보정
+  // 일반 키워드 검색 필터링
+  const filterdBooks = books.filter(
+    (book) =>
+      book.title.includes(searchKeyword) || book.author.includes(searchKeyword),
+  );
+
+  // 코사인 유사도를 직관적인 백분율 점수로 변환하는 보정 함수
   const displaySimilarity = (score) => {
     if (score <= 0) return "0%";
     const min = 0.12;
@@ -219,17 +188,19 @@ function BookListPage() {
     return `${Math.min(100, Math.round(percent))}%`;
   };
 
-  // AI 검색 결과가 화면에 활성화된 상태인지 여부
   const isAiSearchActive = isAiSearch && lastSubmittedQuery.trim() !== "";
 
-  // ── 화면에 표시할 목록 결정 ─────────────────────
-  // "좋아요한 도서" 정렬이면 좋아요한 책만, 아니면 전체 books
+  // 검색 결과에 따른 노출 대상 목록 설정
   const likedFilteredBooks =
     sortOrder === "liked"
-      ? books.filter((book) => likedIds.includes(String(book.id))) // ← filterdBooks → books
-      : books;
+      ? isAiSearchActive
+        ? books.filter((book) => likedIds.includes(String(book.id)))
+        : filterdBooks.filter((book) => likedIds.includes(String(book.id)))
+      : isAiSearchActive
+        ? books
+        : filterdBooks;
 
-  // 정렬 적용 (AI 검색 활성화 시 유사도 높은 순 우선)
+  // 정렬 순서 계산 (AI 검색 활성화 시 유사도 순 정렬 우선)
   const sortedBooks = [...likedFilteredBooks].sort((a, b) => {
     if (isAiSearchActive) {
       const scoreA = similarityScores[a.id] || 0;
@@ -344,9 +315,6 @@ function BookListPage() {
           onKeyDown={(e) => {
             if (e.key === "Enter" && isAiSearch) {
               handleAiSearch();
-            }
-            if(e.key === "Enter" && !isAiSearch) {
-              setSubmittedKeyword(searchKeyword);
             }
           }}
           placeholder={
@@ -649,4 +617,3 @@ function BookListPage() {
 }
 
 export default BookListPage;
- 
