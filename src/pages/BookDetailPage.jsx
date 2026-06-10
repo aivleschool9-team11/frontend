@@ -59,13 +59,19 @@ function BookDetailPage() {
       if (isLiked) {
         const newLikes = Math.max((book.likes || 1) -1, 0);
         const updated = await likeBook(id, newLikes);
-        setBook(updated);
+        setBook((prev) => ({
+          ...prev,
+          likes: updated.likes,
+        }));
         localStorage.removeItem(`likes_${id}`);
         setIsLiked(false);
       } else {
         const newLikes = (book.likes || 0) + 1;
         const updated = await likeBook(id, newLikes);
-        setBook(updated);
+        setBook((prev) => ({
+          ...prev,
+          likes: updated.likes,
+        }));
         localStorage.setItem(`likes_${id}`, "true");
         setIsLiked(true);
       }
