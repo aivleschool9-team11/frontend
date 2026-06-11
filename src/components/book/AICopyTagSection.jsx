@@ -120,22 +120,6 @@ function AICopyTagSection({
             ))}
           </Box>
         )}
-        <TextField
-          label='태그 추가'
-          placeholder='#태그 입력 후 Enter'
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              const tag = e.target.value.trim();
-              if (tag && !tags.includes(tag)) {
-                onAdd(tag);
-                e.target.value = "";
-              }
-            }
-          }}
-          fullWidth
-          variant='outlined'
-        />
       </Box>
     </Box>
   );

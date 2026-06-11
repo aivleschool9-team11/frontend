@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getBooks, searchBooksBySemantic, createSearchLog, logSearchClick} from "../api/books";
+import {searchBooks, searchBooksSemantic, logSearchClick} from "../api/search";
 import {
   Box,
   Typography,
@@ -57,24 +57,19 @@ function BookListPage() {
 
   // ── 도서 목록 불러오기 ───────────────────────────
   // submittedKeyword(검색어) 또는 sortOrder(정렬) 바뀔 때마다 Spring API 호출
-  // 키워드 있을 때만 검색 로그 저장 (타이핑 중엔 호출 안 함, Enter 시에만)
+  // Enter 시에만 호출됨 (타이핑 중엔 호출 안 함)
+  // 검색 로그는 Spring이 자동 저장
   useEffect(() => {
     async function loadBooks() {
       try {
-        const startTime = performance.now();
-        const booksData = await getBooks({keyword: submittedKeyword, sort: sortOrder});
-        const durationMs = Math.round(performance.now() - startTime);
+        const response = await searchBooks({
+          query: submittedKeyword,
+          sort: sortOrder, 
+        });
+        const booksData = response?.books || [];
+        setCurrentSearchLogId(response?.searchLogId); 
         setBooks(booksData);
-
-        // 검색 로그 기록 (초기 로드도 검색으로 간주)
-        if(submittedKeyword.trim()) {
-          await createSearchLog({
-            query: submittedKeyword,
-            searchType: "KEYWORD",
-            matchedBookCount: booksData.length,
-            durationMs,
-          });
-        }
+        
       } catch (err) {
         console.error(err);
         setError("도서 목록을 불러오지 못했어요");
@@ -96,7 +91,7 @@ function BookListPage() {
   // 1) 검색어를 LLM으로 확장 (관련 키워드 추론)
   // 2) 확장된 검색어를 OpenAI로 벡터화
   // 3) 벡터를 Spring으로 전송 → 코사인 유사도 계산 → 유사 도서 반환
-  // 4) 검색 로그 + 노출 결과 클릭 로그 저장
+  // 4) 검색 로그는 Spring이 자동 저장
   const handleAiSearch = async () => {
     if (!searchKeyword.trim()) {
       setSimilarityScores({});
@@ -134,24 +129,10 @@ function BookListPage() {
   
       const queryEmbedding = await fetchAiEmbedding(expandedText);
       
-      // Spring으로 벡터 전송 → 코사인 유사도 계산 → 유사 도서 반환
-      const startTime = performance.now();
-      const results = await searchBooksBySemantic({ queryVector: queryEmbedding, topK: 5 });
-      const durationMs = Math.round(performance.now() - startTime);
-
-      // 검색 로그 저장 후 반환된 id로 노출 결과 클릭 로그 저장
-      const log = await createSearchLog({
-        query: searchKeyword,
-        searchType: "SEMANTIC",
-        matchedBookCount: results.length,
-        durationMs,
-      });
-
-  
-      if (log?.id) {
-        setCurrentSearchLogId(log.id); // 클릭 로그 저장용 log id 보관
-      }
-      setSearchResults(results);      // 검색 결과 상태에 저장 (rankPosition용)
+      const response = await searchBooksSemantic({ queryVector: queryEmbedding, topK: 5 });
+      const results = response?.books || [];
+      setCurrentSearchLogId(response?.searchLogId); 
+      setSearchResults(results);
 
       // 유사도 점수를 { bookId: score } 형태로 저장 → 카드에 표시용
       const scores = {};
