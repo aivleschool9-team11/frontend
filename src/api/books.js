@@ -120,3 +120,19 @@ export async function likeBook(bookId, likes){
     console.error("likeBook 에러:", err);
   }
 }
+
+// ────────────────────────────────────────────
+// 7. 태그별 도서 목록 조회
+// GET /books?tag={tagName}
+// 특정 태그가 달린 도서 목록 반환
+// ────────────────────────────────────────────
+export async function getBooksByTag(tag){
+  try{
+    const res = await fetch(`${BOOKS_API}?tag=${encodeURIComponent(tag)}`);
+    if(!res.ok) throw new Error("태그별 도서 조회 실패");
+    return await res.json();  
+  } catch(err){
+    console.error("getBooksByTag 에러:", err);
+    throw err;
+  }
+}

@@ -310,6 +310,7 @@ function BookDetailPage() {
                 {book.tags.map((tag, i) => (
                   <Box
                     key={i}
+                    onClick={() => navigate(`?tag=${encodeURIComponent(tag)}`)}
                     sx={{
                       fontSize: "12px",
                       padding: "4px 10px",
@@ -318,6 +319,12 @@ function BookDetailPage() {
                       color: "text.secondary",
                       border: "1px solid",
                       borderColor: "primary.light",
+                      cursor: "pointer",  
+                      "&:hover": {
+                        borderColor: "primary.main",
+                        color: "primary.main",
+                        backgroundColor: "rgba(201, 141, 26, 0.08)",
+                      },
                     }}
                   >
                     {tag}

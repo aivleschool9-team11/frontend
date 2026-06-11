@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {searchBooks, searchBooksSemantic, logSearchClick} from "../api/search";
+import {getBooksByTag} from "../api/books";
 import {
   Box,
   Typography,
@@ -46,6 +47,9 @@ function BookListPage() {
   const [currentSearchLogId, setCurrentSearchLogId] = useState(null);  // 클릭 로그 저장할 때 필요한 검색 로그 id
   const [searchResults, setSearchResults] = useState([]);              // AI 검색 결과 원본 (클릭 시 순위 계산용)
 
+  const [searchParams] = useSearchParams(); // URL 파라미터 읽기
+  const tagFromUrl = searchParams.get("tag") || ""; // ?tag=소설 꺼냄
+
   const getLikedIds = () => {
     return Object.keys(localStorage)
       .filter((key) => key.startsWith("likes_"))
@@ -62,14 +66,19 @@ function BookListPage() {
   useEffect(() => {
     async function loadBooks() {
       try {
-        const response = await searchBooks({
-          query: submittedKeyword,
-          sort: sortOrder, 
-        });
-        const booksData = response?.books || [];
-        setCurrentSearchLogId(response?.searchLogId); 
-        setBooks(booksData);
-        
+        if (tagFromUrl) {
+          const booksData = await getBooksByTag(tagFromUrl);
+          setBooks(booksData || []);
+          setCurrentSearchLogId(null);
+        } else{
+          const response = await searchBooks({
+            query: submittedKeyword,
+            sort: sortOrder, 
+          });
+          const booksData = response?.books || [];
+          setCurrentSearchLogId(response?.searchLogId); 
+          setBooks(booksData);
+        } 
       } catch (err) {
         console.error(err);
         setError("도서 목록을 불러오지 못했어요");
@@ -77,7 +86,7 @@ function BookListPage() {
       setLoading(false);
     }
     loadBooks();
-  }, [submittedKeyword, sortOrder]);
+  }, [submittedKeyword, sortOrder, tagFromUrl]);
 
   // 다른 탭에서 돌아올 때 좋아요 상태 동기화
   useEffect(() => {
