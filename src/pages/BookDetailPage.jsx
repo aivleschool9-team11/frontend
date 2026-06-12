@@ -80,11 +80,22 @@ function BookDetailPage() {
     }
   };
 
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = book.coverImageUrl;
-    link.download = `${book.title}_표지.png`;
-    link.click();
+  const handleDownload = async () => {
+    try{
+      const response = await fetch(book.coverImageUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${book.title}_cover.png`;
+      link.click();
+
+      URL.revokeObjectURL(blobUrl);
+    } catch(err){
+      console.error("표지 다운로드 실패:", err);
+      alert("표지 다운로드에 실패했습니다.");
+    }
   };
 
   if (loading) {
