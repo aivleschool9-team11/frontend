@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBookById, updateBook, uploadCoverImage } from "../api/books";
+import {
+  getBookById,
+  updateBook,
+  uploadCoverImage,
+  updateBookCover,
+} from "../api/books";
 import {
   fetchAiCover,
   fetchAiCopyAndTags,
@@ -110,27 +115,29 @@ function BookEditPage() {
     }
 
     // coverImageUrl 변경은 /cover 전용 엔드포인트로 분리 처리
-    if(updatedFields.coverImageUrl !== undefined){
+    if (updatedFields.coverImageUrl !== undefined) {
       let imageUrl = updatedFields.coverImageUrl;
 
-      if(imageUrl.startsWith("data:")) {
-        try{
+      if (imageUrl.startsWith("data:")) {
+        try {
           imageUrl = await uploadCoverImage(imageUrl);
-        } catch(err){
+        } catch (err) {
           console.log("표지 이미지 업로드 실패:", err);
           alert("표지 이미지 업로드에 실패했습니다.");
           return;
         }
-    }
+      }
 
-    try{
-      await updateBookCover(id, imageUrl);
-    } catch(err){
-      console.error("표지 저장 실패:", err);
-      alert("표지 저장에 실패했습니다.");
-      return;
-    }
+      try {
+        await updateBookCover(id, imageUrl);
+      } catch (err) {
+        console.error("표지 저장 실패:", err);
+        alert("표지 저장에 실패했습니다.");
+        return;
+      }
 
+      delete updatedFields.coverImageUrl;
+    }
     const didTextChange =
       updatedFields.title !== undefined ||
       updatedFields.author !== undefined ||
@@ -142,7 +149,9 @@ function BookEditPage() {
         const textToEmbed = `제목: ${book.title}\n저자: ${book.author}\n요약: ${book.summary}\n내용: ${book.content}`;
         const startTime = performance.now();
         updatedFields.embeddingJson = await fetchAiEmbedding(textToEmbed);
-        updatedFields.embeddingDurationMs = Math.round(performance.now() - startTime);
+        updatedFields.embeddingDurationMs = Math.round(
+          performance.now() - startTime,
+        );
       } catch (embErr) {
         console.error("임베딩 수정 실패:", embErr);
       }
@@ -165,7 +174,6 @@ function BookEditPage() {
     alert("도서 수정 완료");
     navigate(`/books/${id}`);
   };
-}
 
   const handleAIGenerate = async () => {
     if (!book.content.trim()) {
