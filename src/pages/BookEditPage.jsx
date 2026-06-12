@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBookById, updateBook } from "../api/books";
+import { getBookById, updateBook, uploadCoverImage } from "../api/books";
 import {
   fetchAiCover,
   fetchAiCopyAndTags,
@@ -109,6 +109,28 @@ function BookEditPage() {
       return;
     }
 
+    // coverImageUrl 변경은 /cover 전용 엔드포인트로 분리 처리
+    if(updatedFields.coverImageUrl !== undefined){
+      let imageUrl = updatedFields.coverImageUrl;
+
+      if(imageUrl.startsWith("data:")) {
+        try{
+          imageUrl = await uploadCoverImage(imageUrl);
+        } catch(err){
+          console.log("표지 이미지 업로드 실패:", err);
+          alert("표지 이미지 업로드에 실패했습니다.");
+          return;
+        }
+    }
+
+    try{
+      await updateBookCover(id, imageUrl);
+    } catch(err){
+      console.error("표지 저장 실패:", err);
+      alert("표지 저장에 실패했습니다.");
+      return;
+    }
+
     const didTextChange =
       updatedFields.title !== undefined ||
       updatedFields.author !== undefined ||
@@ -126,19 +148,24 @@ function BookEditPage() {
       }
     }
 
-    try {
-      const updatedBook = await updateBook(id, updatedFields);
-      if (!updatedBook) {
-        throw new Error("수정 실패");
+    // coverImageUrl만 변경되고 다른 필드는 없으면 PATCH /books/{id} 생략
+    if (Object.keys(updatedFields).length > 0) {
+      try {
+        const updatedBook = await updateBook(id, updatedFields);
+        if (!updatedBook) {
+          throw new Error("수정 실패");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("도서 수정에 실패했습니다.");
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      alert("도서 수정에 실패했습니다.");
-      return;
-    } 
+    }
+
     alert("도서 수정 완료");
     navigate(`/books/${id}`);
   };
+}
 
   const handleAIGenerate = async () => {
     if (!book.content.trim()) {

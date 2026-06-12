@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBook, updateBookCover } from "../api/books";
+import { createBook, updateBookCover, uploadCoverImage } from "../api/books";
 import { fetchAiCover, fetchAiCopyAndTags, fetchAiEmbedding } from "../api/openai";
 import useFormValidation from "../hooks/useFormValidation";
 import BookForm from "../components/book/BookForm";
@@ -83,7 +83,18 @@ function BookCreatePage() {
       }
 
       if (form.coverImageUrl && created.id) {
-        await updateBookCover(created.id, form.coverImageUrl);
+        let imageUrl = form.coverImageUrl;
+        if(imageUrl.startsWith("data:")) {
+          try{
+            imageUrl = await uploadCoverImage(imageUrl);
+          } catch(err){
+            console.error("표지 이미지 업로드 실패:", err);
+            alert("도서는 등록되었지만 표지 이미지 업로드에 실패했습니다.");
+            navigate(`/books/${created.id}`);
+            return;
+          }
+        }
+        await updateBookCover(created.id, imageUrl);
       }
       alert("등록이 완료되었습니다!");
       navigate(`/books/${created.id}`);
