@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import BookListPage from "./pages/BookListPage";
@@ -30,7 +30,8 @@ function App() {
             }}
           >
             <Routes>
-              <Route path="/" element={<BookListPage />} />
+              <Route path="/" element={<Navigate to="/books" replace />} />
+              <Route path="/books" element={<BookListPage />} />
               <Route path="/books/new" element={<BookCreatePage />} />
               <Route path="/books/:id" element={<BookDetailPage />} />
               <Route path="/books/:id/edit" element={<BookEditPage />} />

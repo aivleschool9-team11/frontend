@@ -136,3 +136,23 @@ export async function getBooksByTag(tag){
     throw err;
   }
 }
+
+export async function uploadCoverImage(base64DataUrl){
+  try{
+    const blob = await (await fetch(base64DataUrl)).blob();
+    const formData = new FormData();
+    formData.append("file", blob, "cover.png");
+
+    const res = await fetch(`${BOOKS_API}/upload-image`, {
+      method: "POST",
+      body: formData
+    });
+
+    if(!res.ok) throw new Error("이미지 업로드 실패");
+    const data = await res.json();
+    return data.url;
+  } catch(err){
+    console.log("uploadCoverImage 에러:", err);
+    throw err;
+  }
+}

@@ -310,7 +310,7 @@ function BookDetailPage() {
                 {book.tags.map((tag, i) => (
                   <Box
                     key={i}
-                    onClick={() => navigate(`?tag=${encodeURIComponent(tag)}`)}
+                    onClick={() => navigate(`/books?tag=${encodeURIComponent(tag)}`)}
                     sx={{
                       fontSize: "12px",
                       padding: "4px 10px",
@@ -348,7 +348,7 @@ function BookDetailPage() {
               <Button
                 variant='outlined'
                 size='small'
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/books")}
                 startIcon={<ArrowBackIcon />}
                 sx={{
                   borderColor: "primary.light",
@@ -358,7 +358,7 @@ function BookDetailPage() {
                   "&:hover": { borderColor: "primary.main" },
                 }}
               >
-                목록으로
+                목록으로  
               </Button>
 
               <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
