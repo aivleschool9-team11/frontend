@@ -1,0 +1,47 @@
+version: 0.2
+
+# =====================================================================
+# AIVLE School Day1 - CI 기본 파이프라인 (frontend / Vite + React)
+# CodePipeline > CodeBuild 에서 사용하는 빌드 명세 파일입니다.
+# 이 파일은 반드시 레포지토리 "최상위(root)" 에 위치해야 합니다.
+# =====================================================================
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 22
+    commands:
+      - echo "===== Install Phase ====="
+      - node -v
+      - npm -v
+      # package-lock.json 기반 클린 설치 (CI 환경 권장)
+      - npm ci
+
+  pre_build:
+    commands:
+      - echo "===== Pre-build (Lint) ====="
+      # 코드 정적 검사. 실패 시 빌드 중단 -> 조별 에러 해결 단계로 연결
+      - npm run lint
+
+  build:
+    commands:
+      - echo "===== Build Phase ====="
+      - echo "Build started on `date`"
+      # Vite 프로덕션 빌드 -> dist/ 생성
+      - npm run build
+
+  post_build:
+    commands:
+      - echo "===== Post-build ====="
+      - echo "Build completed on `date`"
+
+# 빌드 산출물(dist) 을 다음 Stage(배포 등)로 전달
+artifacts:
+  base-directory: dist
+  files:
+    - '**/*'
+
+# node_modules 캐싱 -> 다음 빌드 속도 향상
+cache:
+  paths:
+    - 'node_modules/**/*'
