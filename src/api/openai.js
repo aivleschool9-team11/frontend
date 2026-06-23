@@ -131,9 +131,9 @@ export const fetchAiCopyAndTags = async (title, content) => {
 
     try {
       return JSON.parse(data.choices[0].message.content);
-    } catch (e) {
+    } catch (parseError) {
       console.error("AI가 JSON 형식을 지키지 않았습니다:", data.choices[0].message.content);
-      throw new Error("데이터 파싱 실패");
+      throw new Error("데이터 파싱 실패", { cause: parseError });
     }
 
   } catch (err) {

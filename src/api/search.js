@@ -1,5 +1,4 @@
-const BASE_URL = "http://localhost:8080";
-const SEARCH_API = "http://localhost:8080/search"; 
+const SEARCH_API = "http://localhost:8080/search";
 
 // ────────────────────────────────────────────
 // 1. 키워드 검색 (제목/저자/태그/정렬)

@@ -29,7 +29,6 @@ function AICopyTagSection({
   errors = {},
   onChange,
   onAIRequest,
-  onAdd,
   onRemove,
 }) {
   return (

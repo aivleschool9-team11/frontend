@@ -22,7 +22,9 @@ function BookDetailPage() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(
+    () => !!localStorage.getItem(`likes_${id}`)
+  );
 
   useEffect(() => {
     async function loadBook() {
@@ -30,16 +32,13 @@ function BookDetailPage() {
         const data = await getBookById(id);
         if (!data) throw new Error("없음");
         setBook(data);
-      } catch (err) {
+      } catch {
         setError("도서를 찾을 수 없습니다.");
       } finally {
         setLoading(false);
       }
     }
     loadBook();
-
-    const liked = localStorage.getItem(`likes_${id}`);
-    if (liked) setIsLiked(true);
   }, [id]);
 
   const handleDelete = async () => {
