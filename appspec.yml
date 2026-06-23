@@ -12,13 +12,13 @@ files:
   - source: dist/
     destination: /var/www/html
 
-# 배포 생명주기 훅. 각 스크립트는 scripts/ 폴더에 둡니다.
+# 배포 생명주기 훅. 각 스크립트는 deploy-scripts/ 폴더에 둡니다.
 hooks:
   BeforeInstall:
-    - location: scripts/before_install.sh
+    - location: deploy-scripts/before_install.sh
       timeout: 120
       runas: root
   AfterInstall:
-    - location: scripts/after_install.sh
+    - location: deploy-scripts/after_install.sh
       timeout: 120
       runas: root
