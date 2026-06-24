@@ -35,11 +35,13 @@ phases:
       - echo "===== Post-build ====="
       - echo "Build completed on `date`"
 
-# 빌드 산출물(dist) 을 다음 Stage(배포 등)로 전달
+# 빌드 산출물(dist) + 배포 명세(appspec) + 훅 스크립트를 함께 전달
+# CodeDeploy 가 번들 루트에서 appspec.yml / deploy-scripts 를 찾을 수 있도록 포함한다.
 artifacts:
-  base-directory: dist
   files:
-    - '**/*'
+    - 'dist/**/*'
+    - 'appspec.yml'
+    - 'deploy-scripts/**/*'
 
 # node_modules 캐싱 -> 다음 빌드 속도 향상
 cache:
