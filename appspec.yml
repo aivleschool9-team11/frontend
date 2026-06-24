@@ -9,7 +9,7 @@ os: linux
 
 files:
   # 빌드 산출물(dist 내부 파일들) -> nginx 웹 루트로 복사
-  - source: dist/
+  - source: /
     destination: /var/www/html
 
 # 배포 생명주기 훅. 각 스크립트는 deploy-scripts/ 폴더에 둡니다.
