@@ -23,16 +23,17 @@ export async function searchBooks({query ="", sort = "newest", tag = ""} = {}) {
 // ────────────────────────────────────────────
 // 2. AI 의미 검색 (시맨틱 서치)
 // POST /search/semantic
-// React에서 OpenAI로 만든 검색어 벡터(queryVector)를 Spring으로 전송
+// 원본 검색어(query) + OpenAI로 만든 검색어 벡터(queryVector)를 Spring으로 전송
+//   ※ query를 함께 보내야 백엔드가 SEMANTIC 검색 로그를 저장 → searchLogId 발급 → 클릭(CTR) 로그까지 연결됨
 // Spring이 코사인 유사도 계산 후 유사 도서 반환
 // 검색 로그는 Spring이 자동 저장
 // ────────────────────────────────────────────
-export async function searchBooksSemantic({queryVector, topK = 5}){
+export async function searchBooksSemantic({query = "", queryVector, topK = 5}){
     try{
         const res = await fetch(`${SEARCH_API}/semantic`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({queryVector, topK}),
+            body: JSON.stringify({query, queryVector, topK}),
         });
         if(!res.ok) throw new Error("AI 의미 검색 실패");
         return await res.json();
