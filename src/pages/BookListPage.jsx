@@ -138,7 +138,7 @@ function BookListPage() {
   
       const queryEmbedding = await fetchAiEmbedding(expandedText);
       
-      const response = await searchBooksSemantic({ queryVector: queryEmbedding, topK: 5 });
+      const response = await searchBooksSemantic({ query: searchKeyword, queryVector: queryEmbedding, topK: 5 });
       const results = response?.books || [];
       setCurrentSearchLogId(response?.searchLogId); 
       setSearchResults(results);
