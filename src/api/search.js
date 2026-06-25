@@ -6,18 +6,18 @@ const SEARCH_API = "http://localhost:8080/search";
 // query, sort, tag 모두 선택값 — 없으면 전체 조회
 // 검색 로그는 Spring이 자동 저장
 // ────────────────────────────────────────────
-export async function searchBooks({query ="", sort = "newest", tag = ""} = {}) {
-    try{
-        const res = await fetch(SEARCH_API, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({query, sort, tag}),
-        });
-        if(!res.ok) throw new Error("키워드 검색 실패");
-        return await res.json();
-    } catch (err) {
-        console.error("searchBooks 에러:", err);
-    }
+export async function searchBooks({ query = "", sort = "newest", tag = "" } = {}) {
+  try {
+    const res = await fetch(SEARCH_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, sort, tag }),
+    });
+    if (!res.ok) throw new Error("키워드 검색 실패");
+    return await res.json();
+  } catch (err) {
+    console.error("searchBooks 에러:", err);
+  }
 }
 
 // ────────────────────────────────────────────
@@ -28,18 +28,18 @@ export async function searchBooks({query ="", sort = "newest", tag = ""} = {}) {
 // Spring이 코사인 유사도 계산 후 유사 도서 반환
 // 검색 로그는 Spring이 자동 저장
 // ────────────────────────────────────────────
-export async function searchBooksSemantic({query = "", queryVector, topK = 5}){
-    try{
-        const res = await fetch(`${SEARCH_API}/semantic`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({query, queryVector, topK}),
-        });
-        if(!res.ok) throw new Error("AI 의미 검색 실패");
-        return await res.json();
-    } catch (err) {
-        console.error("searchBooksSemantic 에러:", err);
-    }
+export async function searchBooksSemantic({ query = "", queryVector, topK = 5 }) {
+  try {
+    const res = await fetch(`${SEARCH_API}/semantic`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, queryVector, topK }),
+    });
+    if (!res.ok) throw new Error("AI 의미 검색 실패");
+    return await res.json();
+  } catch (err) {
+    console.error("searchBooksSemantic 에러:", err);
+  }
 }
 
 // ────────────────────────────────────────────
@@ -48,7 +48,7 @@ export async function searchBooksSemantic({query = "", queryVector, topK = 5}){
 // AI 검색 결과에서 카드 클릭 시에만 호출
 // Outcome 측정용: 검색 품질 (rankPosition 낮을수록 좋음)
 // ────────────────────────────────────────────
-export async function logSearchClick({searchLogId, bookId, rankPosition, similarityScore }) {
+export async function logSearchClick({ searchLogId, bookId, rankPosition, similarityScore }) {
   try {
     const res = await fetch(`${SEARCH_API}/${searchLogId}/click`, {
       method: "POST",

@@ -1,5 +1,5 @@
 const BASE_URL = "http://localhost:8080";
-const BOOKS_API = `${BASE_URL}/books`;  
+const BOOKS_API = `${BASE_URL}/books`;
 
 
 // ────────────────────────────────────────────
@@ -43,7 +43,7 @@ export const updateBookCover = async (bookId, imageUrl) => {
         coverImageUrl: imageUrl,
       }),
     });
-    if(!res.ok) throw new Error("표지 저장 실패");
+    if (!res.ok) throw new Error("표지 저장 실패");
     return await res.json();
   } catch (err) {
     console.error("updateBookCover 에러:", err);
@@ -109,12 +109,12 @@ export async function updateBook(bookId, updatedFields) {
 // PATCH /books/{id}/likes
 // 좋아요 수 증가/감소 처리
 // ────────────────────────────────────────────
-export async function likeBook(bookId, likes){
+export async function likeBook(bookId, likes) {
   try {
     const res = await fetch(`${BOOKS_API}/${bookId}/likes`, {
       method: "PATCH",
-      headers: {"Content-Type": "application/json" },
-      body: JSON.stringify({likes}),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ likes }),
     });
     if (!res.ok) throw new Error("좋아요 실패");
     return await res.json();
@@ -129,19 +129,19 @@ export async function likeBook(bookId, likes){
 // GET /books?tag={tagName}
 // 특정 태그가 달린 도서 목록 반환
 // ────────────────────────────────────────────
-export async function getBooksByTag(tag){
-  try{
+export async function getBooksByTag(tag) {
+  try {
     const res = await fetch(`${BOOKS_API}?tag=${encodeURIComponent(tag)}`);
-    if(!res.ok) throw new Error("태그별 도서 조회 실패");
-    return await res.json();  
-  } catch(err){
+    if (!res.ok) throw new Error("태그별 도서 조회 실패");
+    return await res.json();
+  } catch (err) {
     console.error("getBooksByTag 에러:", err);
     throw err;
   }
 }
 
-export async function uploadCoverImage(base64DataUrl){
-  try{
+export async function uploadCoverImage(base64DataUrl) {
+  try {
     const blob = await (await fetch(base64DataUrl)).blob();
     const formData = new FormData();
     formData.append("file", blob, "cover.png");
@@ -151,10 +151,10 @@ export async function uploadCoverImage(base64DataUrl){
       body: formData
     });
 
-    if(!res.ok) throw new Error("이미지 업로드 실패");
+    if (!res.ok) throw new Error("이미지 업로드 실패");
     const data = await res.json();
     return data.url;
-  } catch(err){
+  } catch (err) {
     console.log("uploadCoverImage 에러:", err);
     throw err;
   }
