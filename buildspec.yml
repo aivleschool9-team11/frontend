@@ -41,7 +41,7 @@ phases:
       - echo "Build started on `date`"
       # SSM에서 가져온 OpenAI 키를 .env.production.local 에 기록 -> Vite 가 빌드 시 읽어 번들에 주입.
       # (.gitignore 의 *.local 규칙으로 커밋되지 않음. 값은 로그에 출력하지 않도록 파일로만 기록.)
-      - printf 'VITE_OPENAI_API_KEY=%s\nVITE_API_BASE_URL=/api\n' "$VITE_OPENAI_API_KEY" > .env.production.local
+      - printf 'VITE_OPENAI_API_KEY=%s\nVITE_API_URL=/api\n' "$VITE_OPENAI_API_KEY" > .env.production.local
       # Vite 프로덕션 빌드 -> dist/ 생성
       - npm run build
 

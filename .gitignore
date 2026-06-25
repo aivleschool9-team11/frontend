@@ -13,6 +13,9 @@ dist-ssr
 *.local
 .env
 .env.*
+# 비밀이 아닌 환경별 API 주소 설정은 커밋한다 (비밀키는 .env 에만 두고 계속 무시)
+!.env.development
+!.env.production
 
 # Editor directories and files
 .vscode/*

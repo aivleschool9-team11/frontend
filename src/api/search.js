@@ -1,4 +1,8 @@
-const SEARCH_API = "http://localhost:8080/search";
+// 백엔드는 context-path /api 사용. API 주소는 환경별 .env 파일에서 주입:
+//   .env.development -> http://localhost:8080/api (로컬)
+//   .env.production  -> /api (배포, 동일 오리진 -> CORS 불필요)
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+const SEARCH_API = `${BASE_URL}/search`;
 
 // ────────────────────────────────────────────
 // 1. 키워드 검색 (제목/저자/태그/정렬)
