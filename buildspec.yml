@@ -6,6 +6,18 @@ version: 0.2
 # 이 파일은 반드시 레포지토리 "최상위(root)" 에 위치해야 합니다.
 # =====================================================================
 
+# ---------------------------------------------------------------------
+# OpenAI 키 주입 (프론트에서 OpenAI 를 직접 호출하는 구성)
+#   SSM 파라미터스토어 /bookapp/openai_api/key 값을 빌드 환경변수로 가져온다.
+#   ⚠️ Vite 의 VITE_ 변수는 결과 JS 번들에 박혀 브라우저에 노출됨(= 키 공개).
+#      부트캠프 미니프로젝트용으로 의도된 구성. OpenAI 대시보드에서 지출 한도 설정 +
+#      데모/평가 종료 후 키 폐기(rotate) 권장.
+#   ※ CodeBuild 서비스 역할에 ssm:GetParameters (SecureString 이면 kms:Decrypt) 권한 필요
+# ---------------------------------------------------------------------
+env:
+  parameter-store:
+    VITE_OPENAI_API_KEY: /bookapp/openai_api/key
+
 phases:
   install:
     runtime-versions:
@@ -27,6 +39,9 @@ phases:
     commands:
       - echo "===== Build Phase ====="
       - echo "Build started on `date`"
+      # SSM에서 가져온 OpenAI 키를 .env.production.local 에 기록 -> Vite 가 빌드 시 읽어 번들에 주입.
+      # (.gitignore 의 *.local 규칙으로 커밋되지 않음. 값은 로그에 출력하지 않도록 파일로만 기록.)
+      - printf 'VITE_OPENAI_API_KEY=%s\n' "$VITE_OPENAI_API_KEY" > .env.production.local
       # Vite 프로덕션 빌드 -> dist/ 생성
       - npm run build
 
